@@ -5,6 +5,26 @@ const ExecutionArray = ['async', 'sync'];
 // https://webmachinelearning.github.io/webnn/#enumdef-mldevicetype
 const DeviceTypeArray = ['cpu', 'gpu'];
 
+// unit of least precision (ULP) is the spacing between two consecutive floating-point numbers.
+// It is used as a measure of accuracy in numeric calculations.
+const ULPTolerance = {
+  // for single-precision floating-point
+  'float32': {
+    'clamp': 0,
+    'concat': 0,
+    'relu': 0,
+    'reshape': 0,
+    'slice': 0,
+    'split': 0,
+    'squeeze': 0,
+    'transpose': 0,
+  },
+};
+
+function sizeOfShape(array) {
+  return array.reduce((accumulator, currentValue) => accumulator * currentValue, 1);
+}
+
 /**
  * Get bitwise of the given value.
  * @param {number} value
@@ -13,7 +33,7 @@ const DeviceTypeArray = ['cpu', 'gpu'];
  *     https://webmachinelearning.github.io/webnn/#enumdef-mloperandtype
  * @return {number} A 64-bit signed integer.
  */
-  function getBitwise(value, dataType) {
+function getBitwise(value, dataType) {
   const buffer = new ArrayBuffer(8);
   const int64Array = new BigInt64Array(buffer);
   int64Array[0] = value < 0 ? ~BigInt(0) : BigInt(0);
@@ -57,5 +77,26 @@ function assert_array_approx_equals_ulp(actual, expected, nulp, dataType)
       distance = distance >= 0 ? distance : -distance;
       assert_true(distance <= nulp,
                   `The distance of ${actual[i]} should be close enough to the distance of ${expected[i]} by the acceptable ULP distance ${nulp}, while current they have ${distance} ULP distance`);
+  }
+}
+
+/**
+ * Get target deviceType Array by parsering 'd' param of test URL.
+ * @returns {Array} target deviceType Array
+ */
+function getTargetDeviceTypeArray() {
+  // TODO: test in worker
+  const params = new URLSearchParams(location.search);
+  // 'd' means 'deviceType'
+  const deviceTypes = params.getAll('d');
+  if (deviceTypes.length === 0) {
+    return DeviceTypeArray;
+  } else {
+    if (deviceTypes.every((t) => DeviceTypeArray.includes(t))) {
+      return deviceTypes;
+    } else {
+      console.error(`Unsupported such ${deviceTypes.filter(t => !DeviceTypeArray.includes(t))} deviceType`);
+      return DeviceTypeArray;
+    }
   }
 }

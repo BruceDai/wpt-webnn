@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+  <head>
+    <meta charset="utf-8">
+    <title>Demo WebNN WPT Tests</title>
+    <link rel="author" title="Intel" href="http://www.intel.com">
+    <link rel="help" href="https://webmachinelearning.github.io/webnn/">
+    <style>
+      td {
+        text-align:center;
+      }
+    </style>
+    <script>
+      const opArray = [
+        'clamp',
+        'concat',
+        'relu',
+        'reshape',
+        'slice',
+        'split',
+        'squeeze',
+        'transpose',
+      ];
+    
+      function showOpTable() {
+        const tBody = document.getElementById("opTable").tBodies[0];
+        for (const op of opArray) {
+          let newRow = tBody.insertRow();
+          newRow.innerHTML = `<tr><td>${op}</td><td><a href="./${op}.https.any.html" target="_blank">link</a></td><td><a href="./${op}.https.any.worker.html" target="_blank">link</a></td></tr>`;  
+        }
+      }
+    </script>
+  </head>
+  <body onload="showOpTable()">
+    <div>
+      <h3>IDL Tests</h3>
+      <hr>
+      <table id="idlTable">
+        <tr>
+          <td style="text-align:center;"><a href="./idlharness.https.any.html" target="_blank">Run in Window</a></td>
+          <td style="text-align:center;"><a href="./idlharness.https.any.worker.html" target="_blank">Run in Worker</a></td>
+        </tr>
+      </table>  
+    </div>
+    <div>
+      <h3>0p Tests</h3>
+      <hr>
+      <table id="opTable">
+        <thead>
+          <tr>
+            <th>Op Name</th>
+            <th> / Run in Window </th>
+            <th> / Run in Worker </th>
+          </tr>
+        </thead>
+        <tbody></tbody>
+      </table>
+    </div>
+  </body>
+</html>
