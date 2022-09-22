@@ -1,7 +1,7 @@
 <!DOCTYPE html>
   <head>
     <meta charset="utf-8">
-    <title>Demo WebNN WPT Tests</title>
+    <title>Local WebNN WPT Tests</title>
     <link rel="author" title="Intel" href="http://www.intel.com">
     <link rel="help" href="https://webmachinelearning.github.io/webnn/">
     <style>
@@ -10,7 +10,7 @@
       }
     </style>
     <script>
-      const opArray = [
+      const WebNNOps = [
         'clamp',
         'concat',
         'relu',
@@ -23,7 +23,20 @@
     
       function showOpTable() {
         const tBody = document.getElementById("opTable").tBodies[0];
-        for (const op of opArray) {
+        const params = new URLSearchParams(location.search);
+        let targetOps;
+        const ops = params.getAll('op');
+        if (ops.length == 0) {
+          targetOps = WebNNOps;
+        } else {
+          if (ops.every((t) => WebNNOps.includes(t))) {
+            targetOps = ops;
+          } else {
+            alert(`Unsupported such ${ops.filter(t => !WebNNOps.includes(t))} op!`);
+            targetOps = [];
+          }
+        }
+        for (const op of targetOps) {
           let newRow = tBody.insertRow();
           newRow.innerHTML = `<tr><td>${op}</td><td><a href="./${op}.https.any.html" target="_blank">link</a></td><td><a href="./${op}.https.any.worker.html" target="_blank">link</a></td></tr>`;  
         }
