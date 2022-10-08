@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+  <head>
+    <meta charset="utf-8">
+    <title>Local WebNN WPT Tests</title>
+    <link rel="author" title="Intel" href="http://www.intel.com">
+    <link rel="help" href="https://webmachinelearning.github.io/webnn/">
+    <style>
+      td {
+        text-align:center;
+      }
+    </style>
+    <script>
+      const WebNNOps = [
+        'batch_norm',
+        'clamp',
+        'concat',
+        'conv2d',
+        'binary',
+        'gemm',
+        'leakyRelu',
+        'matmul',
+        'pool2d',
+        'reduce',
+        'relu',
+        'reshape',
+        'sigmoid',
+        'slice',
+        'split',
+        'squeeze',
+        'tanh',
+        'transpose',
+        'unary',
+      ];
+    
+      function showOpTable() {
+        const tBody = document.getElementById("opTable").tBodies[0];
+        const params = new URLSearchParams(location.search);
+        let targetOps;
+        const ops = params.getAll('op');
+        if (ops.length == 0) {
+          targetOps = WebNNOps;
+        } else {
+          if (ops.every((t) => WebNNOps.includes(t))) {
+            targetOps = ops;
+          } else {
+            alert(`Unsupported such ${ops.filter(t => !WebNNOps.includes(t))} op!`);
+            targetOps = [];
+          }
+        }
+        for (const op of targetOps) {
+          let newRow = tBody.insertRow();
+          newRow.innerHTML = `<tr><td>${op}</td><td><a href="./${op}.https.any.html" target="_blank">link</a></td><td><a href="./${op}.https.any.worker.html" target="_blank">link</a></td></tr>`;  
+        }
+      }
+    </script>
+  </head>
+  <body onload="showOpTable()">
+    <div>
+      <h3>IDL Tests</h3>
+      <hr>
+      <table id="idlTable">
+        <tr>
+          <td style="text-align:center;"><a href="./idlharness.https.any.html" target="_blank">Run in Window</a></td>
+          <td style="text-align:center;"><a href="./idlharness.https.any.worker.html" target="_blank">Run in Worker</a></td>
+        </tr>
+      </table>  
+    </div>
+    <div>
+      <h3>0p Tests</h3>
+      <hr>
+      <table id="opTable">
+        <thead>
+          <tr>
+            <th>Op Name</th>
+            <th> / Run in Window </th>
+            <th> / Run in Worker </th>
+          </tr>
+        </thead>
+        <tbody></tbody>
+      </table>
+    </div>
+  </body>
+</html>

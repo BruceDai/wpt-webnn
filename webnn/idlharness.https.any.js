@@ -1,6 +1,6 @@
 // META: global=window,dedicatedworker
-// META: script=/resources/WebIDLParser.js
-// META: script=/resources/idlharness.js
+// META: script=../resources/webidl2/lib/webidl2.js
+// META: script=../resources/idlharness.js
 // META: script=./resources/utils.js
 // META: timeout=long
 
@@ -34,8 +34,9 @@ idl_test(
         return;
       }
 
-      DeviceTypeArray.forEach(async (deviceType) => {
-        self.context = navigator.ml.createContext({deviceType});
+      const targetDeviceTypeArray = getTargetDeviceTypeArray();
+      targetDeviceTypeArray.forEach(async (deviceType) => {
+        await navigator.ml.createContext({deviceType}).then((ret) => self.context = ret);
         self.builder = new MLGraphBuilder(context);
         self.input = builder.input('input', {type: 'float32', dimensions: [1, 1, 5, 5]});
         self.filter = builder.constant({type: 'float32', dimensions: [1, 1, 3, 3]}, new Float32Array(9).fill(1));
