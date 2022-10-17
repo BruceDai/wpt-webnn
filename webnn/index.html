@@ -51,6 +51,18 @@
           let newRow = tBody.insertRow();
           newRow.innerHTML = `<tr><td>${op}</td><td><a href="./${op}.https.any.html" target="_blank">link</a></td><td><a href="./${op}.https.any.worker.html" target="_blank">link</a></td></tr>`;  
         }
+        const runtime = params.getAll('r');
+        if (runtime !== undefined) {
+          if (runtime[0] === 'window') {
+            window.location.href = "./${targetOps[0]}.https.any.html";
+          } else if (runtime[0] === 'worker') {
+            window.location.href = "./${targetOps[0]}.https.any.worker.html";
+          } else {
+            alert(`Unsupported to run in such ${runtime[0]} environment, environment should be window or worker.`);
+          }
+        } else {
+          window.location.href = "./${targetOps[0]}.https.any.html";
+        }
       }
     </script>
   </head>
