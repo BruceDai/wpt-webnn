@@ -12,7 +12,7 @@ const buildConcat = (operationName, builder, resources) => {
   const namedOutputOperand = {};
   const inputOperands = [];
   for (let input of resources.inputs) {
-    inputOperands.push(builder.input(input.name, {type: input.type, dimensions: input.shape}));
+    inputOperands.push(builder.input(input.name, {dataType: input.type, type: input.type, dimensions: input.shape}));
   }
   // invoke builder.concat()
   namedOutputOperand[resources.expected.name] = builder[operationName](inputOperands, resources.axis);

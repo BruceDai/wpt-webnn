@@ -488,7 +488,7 @@ const checkResults = (operationName, namedOutputOperands, outputs, resources) =>
  */
 const createConstantOperand = (builder, resources) => {
   const bufferView = new TypedArrayDict[resources.type](resources.data);
-  return builder.constant({type: resources.type, dimensions: resources.shape}, bufferView);
+  return builder.constant({dataType: resources.type, type: resources.type, dimensions: resources.shape}, bufferView);
 };
 
 /**
@@ -501,7 +501,7 @@ const createConstantOperand = (builder, resources) => {
 const createSingleInputOperand = (builder, resources, inputOperandName) => {
   inputOperandName = inputOperandName ? inputOperandName : Object.keys(resources.inputs)[0];
   const inputResources = resources.inputs[inputOperandName];
-  return builder.input(inputOperandName, {type: inputResources.type, dimensions: inputResources.shape});
+  return builder.input(inputOperandName, {dataType: inputResources.type, type: inputResources.type, dimensions: inputResources.shape});
 };
 
 /**
