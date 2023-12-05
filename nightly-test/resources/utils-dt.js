@@ -294,15 +294,26 @@ const PrecisionMetrics = {
   min: {ULP: {float32: 0, float16: 0}},
   pow: {ULP: {float32: 32, float16: 2}},
   // End Element-wise binary operations
+  // Begin Element-wise logical operations
+  equal: {ULP: {uint8: 0}},
+  greater: {ULP: {uint8: 0}},
+  greaterOrEqual: {ULP: {uint8: 0}},
+  lesser: {ULP: {uint8: 0}},
+  lesserOrEqual: {ULP: {uint8: 0}},
+  logicalNot: {ULP: {uint8: 0}},
+  // End Element-wise logical operations
   // Begin Element-wise unary operations
   abs: {ULP: {float32: 0, float16: 0}},
   ceil: {ULP: {float32: 0, float16: 0}},
   cos: {ATOL: {float32: 1/1024, float16: 1/512}},
   exp: {ULP: {float32: 32, float16: 1}},
   floor: {ULP: {float32: 0, float16: 0}},
+  identity: {ULP: {float32: 0, float16: 0}},
   log: {ATOL: {float32: 1/1024, float16:  1/1024}},
   neg: {ULP: {float32: 0, float16: 0}},
+  reciprocal: {ULP: {float32: 2, float16: 2}},
   sin: {ATOL: {float32: 1/1024, float16: 1/512}},
+  sqrt: {ULP: {float32: 1, float16: 1}},
   tan: {ATOL: {float32: 1/1024, float16: 1/512}},
   // End Element-wise unary operations
   elu: {ULP: {float32: 18, float16: 18}},
