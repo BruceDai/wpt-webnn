@@ -11,7 +11,8 @@ const TypedArrayDict = {
   int32: Int32Array,
   uint32: Uint32Array,
   int8: Int8Array,
-  uint8: Uint8Array
+  uint8: Uint8Array,
+  int64: BigInt64Array,
 };
 
 const getTypedArrayData = (type, data) => {
@@ -21,6 +22,12 @@ const getTypedArrayData = (type, data) => {
     outData = new TypedArrayDict[type](data.length);
     for (let i = 0; i < data.length; i++) {
       outData[i] = toHalf(data[i]);
+    }
+  } else if (type === 'int64') {
+    // workaround to convert Float16 to Unit16
+    outData = new TypedArrayDict[type](data.length);
+    for (let i = 0; i < data.length; i++) {
+      outData[i] = BigInt(data[i]);
     }
   } else {
     outData = new TypedArrayDict[type](data);
@@ -280,6 +287,8 @@ const getReductionPrecisionTolerance = (resources, operationName) => {
 
 // Refer to precision metrics on https://github.com/webmachinelearning/webnn/issues/265#issuecomment-1256242643
 const PrecisionMetrics = {
+  argMax: {ULP: {int64: 0}},
+  argMin: {ULP: {int64: 0}},
   batchNormalization: {ULP: {float32: 6, float16: 6}},
   clamp: {ULP: {float32: 0, float16: 0}},
   concat: {ULP: {float32: 0, float16: 0}},
@@ -425,6 +434,9 @@ const assert_array_approx_equals_ulp = (actual, expected, nulp, dataType, descri
         actualBitwise = actual[i];
         // convert expected data to Uint16
         expectedBitwise = toHalf(expected[i]);
+      } else if (dataType === 'int64') {
+        actualBitwise = actual[i];
+        expectedBitwise = BigInt(expected[i]);
       }
       distance = actualBitwise - expectedBitwise;
       distance = distance >= 0 ? distance : -distance;
