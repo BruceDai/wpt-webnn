@@ -292,6 +292,7 @@ const PrecisionMetrics = {
   batchNormalization: {ULP: {float32: 6, float16: 6}},
   clamp: {ULP: {float32: 0, float16: 0}},
   concat: {ULP: {float32: 0, float16: 0}},
+  constant: {ULP: {float32: 2, float16: 2, int32: 0, uint32: 0, int64: 0, int8: 0, uint8: 0}},
   conv2d: {ULP: {float32: getConv2dPrecisionTolerance, float16: getConv2dPrecisionTolerance}},
   convTranspose2d: {ULP: {float32: getConv2dPrecisionTolerance, float16: getConv2dPrecisionTolerance}},
   // Begin Element-wise binary operations
@@ -563,6 +564,14 @@ const buildLayerNorm = (operationName, builder, resources) => {
   }
   // invoke builder.layerNormalization()
   namedOutputOperand[resources.expected.name] = builder[operationName](inputOperand, layerNormOptions);
+  return namedOutputOperand;
+};
+
+const buildConstantRange = (operationName, builder, resources) => {
+  const namedOutputOperand = {};
+  // invoke builder.constant(descriptor, start, step)
+  const type = resources.type ?? 'float32';
+  namedOutputOperand[resources.expected.name] = builder[operationName]({dataType: type, type: type, dimensions: resources.outputShape}, resources.inputs.start, resources.inputs.step);
   return namedOutputOperand;
 };
 
