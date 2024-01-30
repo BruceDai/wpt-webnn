@@ -31,8 +31,7 @@
             1,
             2
           ],
-          "type": "float32",
-          "constant": true
+          "type": "float32"
         }
       },
       "expected": {
@@ -77,8 +76,7 @@
           "data": [
             1
           ],
-          "type": "float32",
-          "constant": true
+          "type": "float32"
         }
       },
       "expected": {
