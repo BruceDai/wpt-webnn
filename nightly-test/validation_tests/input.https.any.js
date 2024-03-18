@@ -67,7 +67,7 @@ const tests = [
     name: 'input',
     descriptor: {
       dataType: 'float32',
-      dimensions: [2 ** 32, , 2 ** 32, 2 ** 32]
+      dimensions: [2 ** 32, 2 ** 32, 2 ** 32]
     }
   }
 ];

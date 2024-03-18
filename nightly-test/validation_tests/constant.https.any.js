@@ -124,6 +124,12 @@ const tests = [
         '[constant] Throw if bufferView type doesn\'t match the operand data type',
     descriptor: {dataType: 'float32', dimensions: [2, 3]},
     bufferView: {type: Int32Array, byteLength: 6 * 4}
+  },
+  {
+    name:
+        '[constant] Throw if byte length of bufferView for float32 is too large with dimensions: [2 ** 11, 2 ** 10, 2 ** 10]',
+    descriptor: {dataType: 'float32', dimensions: [2 ** 11, 2 ** 10, 2 ** 10]},
+    bufferView: {type: Float32Array, byteLength: 2 ** 33}
   }
 ];
 
