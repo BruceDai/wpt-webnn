@@ -29,7 +29,6 @@ const ceilTests = [
         'ceilInput': {
           'data': [67.38941955566406],
           'descriptor': {shape: [], dataType: 'float32'},
-          'constant': true
         }
       },
       'operators': [{
