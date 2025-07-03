@@ -49,7 +49,8 @@ const sigmoidTests = [
               24
             ],
             "dataType": "float32"
-          }
+          },
+          "constant": true
         }
       },
       "operators": [
