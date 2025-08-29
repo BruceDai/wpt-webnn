@@ -1414,7 +1414,7 @@ async function webnn_conformance_test(
               toleranceFunc, result, test.graph, intermediateOperands);
         }, `${isMinimumTest(test) ? '[required]' : '[optional]'} ${test.name}`);
       }));
-    }, 'no tests to run');
+    }, testsToRun.length > 0 ? '' : 'no tests to run');
   } else {
     test(() => assert_implements(navigator.ml, 'missing navigator.ml'));
   }
