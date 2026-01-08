@@ -1,750 +1,921 @@
 // META: title=test WebNN API split operation
-// META: global=window,dedicatedworker
-// META: script=./resources/utils.js
+// META: global=window
+// META: variant=?cpu
+// META: variant=?gpu
+// META: variant=?npu
+// META: script=../resources/utils.js
 // META: timeout=long
 
 'use strict';
 
-// https://webmachinelearning.github.io/webnn/#api-mlgraphbuilder-split
+// https://www.w3.org/TR/webnn/#api-mlgraphbuilder-split
+// Split the input tensor into a number of sub tensors along the given axis.
+//
+// dictionary MLSplitOptions {
+//   [EnforceRange] unsigned long axis = 0;
+// };
+//
+// sequence<MLOperand> split(
+//     MLOperand input,
+//     ([EnforceRange] unsigned long or sequence<[EnforceRange] unsigned long>)
+//     splits, optional MLSplitOptions options = {});
 
-const inputData1 = [
-  1.,  2.,  3.,  4.,  5.,  6.,
+const splitTests = [
+  {
+    'name': 'split float32 1D constant tensor number splits default options',
+    'graph': {
+      'inputs': {
+        'splitInput': {
+          'data': [
+            -64.52056884765625,  -84.60513305664062, -67.99282836914062,
+            -23.446075439453125, -85.64382934570312, 46.87752151489258,
+            -68.11224365234375,  75.99607849121094,  -61.05668640136719,
+            -90.92643737792969,  53.916622161865234, 84.16268920898438,
+            -95.57494354248047,  -52.40757751464844, -29.007186889648438,
+            71.65496063232422,   50.66357421875,     21.364582061767578,
+            -27.127241134643555, 65.1489486694336,   -30.40681266784668,
+            -6.818390369415283,  46.673622131347656, -21.12453842163086
+          ],
+          'descriptor': {shape: [24], dataType: 'float32'},
+          'constant': true
+        }
+      },
+      'operators': [{
+        'name': 'split',
+        'arguments': [{'input': 'splitInput'}, {'splits': 3}],
+        'outputs': ['splitOutput1', 'splitOutput2', 'splitOutput3']
+      }],
+      'expectedOutputs': {
+        'splitOutput1': {
+          'data': [
+            -64.52056884765625, -84.60513305664062, -67.99282836914062,
+            -23.446075439453125, -85.64382934570312, 46.87752151489258,
+            -68.11224365234375, 75.99607849121094
+          ],
+          'descriptor': {shape: [8], dataType: 'float32'}
+        },
+        'splitOutput2': {
+          'data': [
+            -61.05668640136719, -90.92643737792969, 53.916622161865234,
+            84.16268920898438, -95.57494354248047, -52.40757751464844,
+            -29.007186889648438, 71.65496063232422
+          ],
+          'descriptor': {shape: [8], dataType: 'float32'}
+        },
+        'splitOutput3': {
+          'data': [
+            50.66357421875, 21.364582061767578, -27.127241134643555,
+            65.1489486694336, -30.40681266784668, -6.818390369415283,
+            46.673622131347656, -21.12453842163086
+          ],
+          'descriptor': {shape: [8], dataType: 'float32'}
+        }
+      }
+    }
+  },
+  {
+    'name': 'split float32 1D tensor number splits default options',
+    'graph': {
+      'inputs': {
+        'splitInput': {
+          'data': [
+            -64.52056884765625,  -84.60513305664062, -67.99282836914062,
+            -23.446075439453125, -85.64382934570312, 46.87752151489258,
+            -68.11224365234375,  75.99607849121094,  -61.05668640136719,
+            -90.92643737792969,  53.916622161865234, 84.16268920898438,
+            -95.57494354248047,  -52.40757751464844, -29.007186889648438,
+            71.65496063232422,   50.66357421875,     21.364582061767578,
+            -27.127241134643555, 65.1489486694336,   -30.40681266784668,
+            -6.818390369415283,  46.673622131347656, -21.12453842163086
+          ],
+          'descriptor': {shape: [24], dataType: 'float32'}
+        }
+      },
+      'operators': [{
+        'name': 'split',
+        'arguments': [{'input': 'splitInput'}, {'splits': 3}],
+        'outputs': ['splitOutput1', 'splitOutput2', 'splitOutput3']
+      }],
+      'expectedOutputs': {
+        'splitOutput1': {
+          'data': [
+            -64.52056884765625, -84.60513305664062, -67.99282836914062,
+            -23.446075439453125, -85.64382934570312, 46.87752151489258,
+            -68.11224365234375, 75.99607849121094
+          ],
+          'descriptor': {shape: [8], dataType: 'float32'}
+        },
+        'splitOutput2': {
+          'data': [
+            -61.05668640136719, -90.92643737792969, 53.916622161865234,
+            84.16268920898438, -95.57494354248047, -52.40757751464844,
+            -29.007186889648438, 71.65496063232422
+          ],
+          'descriptor': {shape: [8], dataType: 'float32'}
+        },
+        'splitOutput3': {
+          'data': [
+            50.66357421875, 21.364582061767578, -27.127241134643555,
+            65.1489486694336, -30.40681266784668, -6.818390369415283,
+            46.673622131347656, -21.12453842163086
+          ],
+          'descriptor': {shape: [8], dataType: 'float32'}
+        }
+      }
+    }
+  },
+  {
+    'name': 'split float32 2D tensor number splits default options',
+    'graph': {
+      'inputs': {
+        'splitInput': {
+          'data': [
+            -64.52056884765625,  -84.60513305664062, -67.99282836914062,
+            -23.446075439453125, -85.64382934570312, 46.87752151489258,
+            -68.11224365234375,  75.99607849121094,  -61.05668640136719,
+            -90.92643737792969,  53.916622161865234, 84.16268920898438,
+            -95.57494354248047,  -52.40757751464844, -29.007186889648438,
+            71.65496063232422,   50.66357421875,     21.364582061767578,
+            -27.127241134643555, 65.1489486694336,   -30.40681266784668,
+            -6.818390369415283,  46.673622131347656, -21.12453842163086
+          ],
+          'descriptor': {shape: [8, 3], dataType: 'float32'}
+        }
+      },
+      'operators': [{
+        'name': 'split',
+        'arguments': [{'input': 'splitInput'}, {'splits': 2}],
+        'outputs': ['splitOutput1', 'splitOutput2']
+      }],
+      'expectedOutputs': {
+        'splitOutput1': {
+          'data': [
+            -64.52056884765625, -84.60513305664062, -67.99282836914062,
+            -23.446075439453125, -85.64382934570312, 46.87752151489258,
+            -68.11224365234375, 75.99607849121094, -61.05668640136719,
+            -90.92643737792969, 53.916622161865234, 84.16268920898438
+          ],
+          'descriptor': {shape: [4, 3], dataType: 'float32'}
+        },
+        'splitOutput2': {
+          'data': [
+            -95.57494354248047, -52.40757751464844, -29.007186889648438,
+            71.65496063232422, 50.66357421875, 21.364582061767578,
+            -27.127241134643555, 65.1489486694336, -30.40681266784668,
+            -6.818390369415283, 46.673622131347656, -21.12453842163086
+          ],
+          'descriptor': {shape: [4, 3], dataType: 'float32'}
+        }
+      }
+    }
+  },
+  {
+    'name': 'split float32 3D tensor number splits default options',
+    'graph': {
+      'inputs': {
+        'splitInput': {
+          'data': [
+            -64.52056884765625,  -84.60513305664062, -67.99282836914062,
+            -23.446075439453125, -85.64382934570312, 46.87752151489258,
+            -68.11224365234375,  75.99607849121094,  -61.05668640136719,
+            -90.92643737792969,  53.916622161865234, 84.16268920898438,
+            -95.57494354248047,  -52.40757751464844, -29.007186889648438,
+            71.65496063232422,   50.66357421875,     21.364582061767578,
+            -27.127241134643555, 65.1489486694336,   -30.40681266784668,
+            -6.818390369415283,  46.673622131347656, -21.12453842163086
+          ],
+          'descriptor': {shape: [4, 3, 2], dataType: 'float32'}
+        }
+      },
+      'operators': [{
+        'name': 'split',
+        'arguments': [{'input': 'splitInput'}, {'splits': 2}],
+        'outputs': ['splitOutput1', 'splitOutput2']
+      }],
+      'expectedOutputs': {
+        'splitOutput1': {
+          'data': [
+            -64.52056884765625, -84.60513305664062, -67.99282836914062,
+            -23.446075439453125, -85.64382934570312, 46.87752151489258,
+            -68.11224365234375, 75.99607849121094, -61.05668640136719,
+            -90.92643737792969, 53.916622161865234, 84.16268920898438
+          ],
+          'descriptor': {shape: [2, 3, 2], dataType: 'float32'}
+        },
+        'splitOutput2': {
+          'data': [
+            -95.57494354248047, -52.40757751464844, -29.007186889648438,
+            71.65496063232422, 50.66357421875, 21.364582061767578,
+            -27.127241134643555, 65.1489486694336, -30.40681266784668,
+            -6.818390369415283, 46.673622131347656, -21.12453842163086
+          ],
+          'descriptor': {shape: [2, 3, 2], dataType: 'float32'}
+        }
+      }
+    }
+  },
+  {
+    'name': 'split float32 4D tensor number splits default options',
+    'graph': {
+      'inputs': {
+        'splitInput': {
+          'data': [
+            -64.52056884765625,  -84.60513305664062, -67.99282836914062,
+            -23.446075439453125, -85.64382934570312, 46.87752151489258,
+            -68.11224365234375,  75.99607849121094,  -61.05668640136719,
+            -90.92643737792969,  53.916622161865234, 84.16268920898438,
+            -95.57494354248047,  -52.40757751464844, -29.007186889648438,
+            71.65496063232422,   50.66357421875,     21.364582061767578,
+            -27.127241134643555, 65.1489486694336,   -30.40681266784668,
+            -6.818390369415283,  46.673622131347656, -21.12453842163086
+          ],
+          'descriptor': {shape: [12, 1, 1, 2], dataType: 'float32'}
+        }
+      },
+      'operators': [{
+        'name': 'split',
+        'arguments': [{'input': 'splitInput'}, {'splits': 4}],
+        'outputs':
+            ['splitOutput1', 'splitOutput2', 'splitOutput3', 'splitOutput4']
+      }],
+      'expectedOutputs': {
+        'splitOutput1': {
+          'data': [
+            -64.52056884765625, -84.60513305664062, -67.99282836914062,
+            -23.446075439453125, -85.64382934570312, 46.87752151489258
+          ],
+          'descriptor': {shape: [3, 1, 1, 2], dataType: 'float32'}
+        },
+        'splitOutput2': {
+          'data': [
+            -68.11224365234375, 75.99607849121094, -61.05668640136719,
+            -90.92643737792969, 53.916622161865234, 84.16268920898438
+          ],
+          'descriptor': {shape: [3, 1, 1, 2], dataType: 'float32'}
+        },
+        'splitOutput3': {
+          'data': [
+            -95.57494354248047, -52.40757751464844, -29.007186889648438,
+            71.65496063232422, 50.66357421875, 21.364582061767578
+          ],
+          'descriptor': {shape: [3, 1, 1, 2], dataType: 'float32'}
+        },
+        'splitOutput4': {
+          'data': [
+            -27.127241134643555, 65.1489486694336, -30.40681266784668,
+            -6.818390369415283, 46.673622131347656, -21.12453842163086
+          ],
+          'descriptor': {shape: [3, 1, 1, 2], dataType: 'float32'}
+        }
+      }
+    }
+  },
+  {
+    'name': 'split float32 5D tensor number splits default options',
+    'graph': {
+      'inputs': {
+        'splitInput': {
+          'data': [
+            -64.52056884765625,  -84.60513305664062, -67.99282836914062,
+            -23.446075439453125, -85.64382934570312, 46.87752151489258,
+            -68.11224365234375,  75.99607849121094,  -61.05668640136719,
+            -90.92643737792969,  53.916622161865234, 84.16268920898438,
+            -95.57494354248047,  -52.40757751464844, -29.007186889648438,
+            71.65496063232422,   50.66357421875,     21.364582061767578,
+            -27.127241134643555, 65.1489486694336,   -30.40681266784668,
+            -6.818390369415283,  46.673622131347656, -21.12453842163086
+          ],
+          'descriptor': {shape: [6, 1, 1, 2, 2], dataType: 'float32'}
+        }
+      },
+      'operators': [{
+        'name': 'split',
+        'arguments': [{'input': 'splitInput'}, {'splits': 2}],
+        'outputs': ['splitOutput1', 'splitOutput2']
+      }],
+      'expectedOutputs': {
+        'splitOutput1': {
+          'data': [
+            -64.52056884765625, -84.60513305664062, -67.99282836914062,
+            -23.446075439453125, -85.64382934570312, 46.87752151489258,
+            -68.11224365234375, 75.99607849121094, -61.05668640136719,
+            -90.92643737792969, 53.916622161865234, 84.16268920898438
+          ],
+          'descriptor': {shape: [3, 1, 1, 2, 2], dataType: 'float32'}
+        },
+        'splitOutput2': {
+          'data': [
+            -95.57494354248047, -52.40757751464844, -29.007186889648438,
+            71.65496063232422, 50.66357421875, 21.364582061767578,
+            -27.127241134643555, 65.1489486694336, -30.40681266784668,
+            -6.818390369415283, 46.673622131347656, -21.12453842163086
+          ],
+          'descriptor': {shape: [3, 1, 1, 2, 2], dataType: 'float32'}
+        }
+      }
+    }
+  },
+  {
+    'name': 'split float32 4D tensor array splits default options',
+    'graph': {
+      'inputs': {
+        'splitInput': {
+          'data': [
+            -64.52056884765625,  -84.60513305664062, -67.99282836914062,
+            -23.446075439453125, -85.64382934570312, 46.87752151489258,
+            -68.11224365234375,  75.99607849121094,  -61.05668640136719,
+            -90.92643737792969,  53.916622161865234, 84.16268920898438,
+            -95.57494354248047,  -52.40757751464844, -29.007186889648438,
+            71.65496063232422,   50.66357421875,     21.364582061767578,
+            -27.127241134643555, 65.1489486694336,   -30.40681266784668,
+            -6.818390369415283,  46.673622131347656, -21.12453842163086
+          ],
+          'descriptor': {shape: [12, 1, 1, 2], dataType: 'float32'}
+        }
+      },
+      'operators': [{
+        'name': 'split',
+        'arguments': [{'input': 'splitInput'}, {'splits': [3, 3, 3, 3]}],
+        'outputs':
+            ['splitOutput1', 'splitOutput2', 'splitOutput3', 'splitOutput4']
+      }],
+      'expectedOutputs': {
+        'splitOutput1': {
+          'data': [
+            -64.52056884765625, -84.60513305664062, -67.99282836914062,
+            -23.446075439453125, -85.64382934570312, 46.87752151489258
+          ],
+          'descriptor': {shape: [3, 1, 1, 2], dataType: 'float32'}
+        },
+        'splitOutput2': {
+          'data': [
+            -68.11224365234375, 75.99607849121094, -61.05668640136719,
+            -90.92643737792969, 53.916622161865234, 84.16268920898438
+          ],
+          'descriptor': {shape: [3, 1, 1, 2], dataType: 'float32'}
+        },
+        'splitOutput3': {
+          'data': [
+            -95.57494354248047, -52.40757751464844, -29.007186889648438,
+            71.65496063232422, 50.66357421875, 21.364582061767578
+          ],
+          'descriptor': {shape: [3, 1, 1, 2], dataType: 'float32'}
+        },
+        'splitOutput4': {
+          'data': [
+            -27.127241134643555, 65.1489486694336, -30.40681266784668,
+            -6.818390369415283, 46.673622131347656, -21.12453842163086
+          ],
+          'descriptor': {shape: [3, 1, 1, 2], dataType: 'float32'}
+        }
+      }
+    }
+  },
+  {
+    'name': 'split float32 4D tensor number splits options.axis',
+    'graph': {
+      'inputs': {
+        'splitInput': {
+          'data': [
+            -64.52056884765625,  -84.60513305664062, -67.99282836914062,
+            -23.446075439453125, -85.64382934570312, 46.87752151489258,
+            -68.11224365234375,  75.99607849121094,  -61.05668640136719,
+            -90.92643737792969,  53.916622161865234, 84.16268920898438,
+            -95.57494354248047,  -52.40757751464844, -29.007186889648438,
+            71.65496063232422,   50.66357421875,     21.364582061767578,
+            -27.127241134643555, 65.1489486694336,   -30.40681266784668,
+            -6.818390369415283,  46.673622131347656, -21.12453842163086
+          ],
+          'descriptor': {shape: [12, 1, 1, 2], dataType: 'float32'}
+        }
+      },
+      'operators': [{
+        'name': 'split',
+        'arguments':
+            [{'input': 'splitInput'}, {'splits': 3}, {'options': {'axis': 0}}],
+        'outputs': ['splitOutput1', 'splitOutput2', 'splitOutput3']
+      }],
+      'expectedOutputs': {
+        'splitOutput1': {
+          'data': [
+            -64.52056884765625, -84.60513305664062, -67.99282836914062,
+            -23.446075439453125, -85.64382934570312, 46.87752151489258,
+            -68.11224365234375, 75.99607849121094
+          ],
+          'descriptor': {shape: [4, 1, 1, 2], dataType: 'float32'}
+        },
+        'splitOutput2': {
+          'data': [
+            -61.05668640136719, -90.92643737792969, 53.916622161865234,
+            84.16268920898438, -95.57494354248047, -52.40757751464844,
+            -29.007186889648438, 71.65496063232422
+          ],
+          'descriptor': {shape: [4, 1, 1, 2], dataType: 'float32'}
+        },
+        'splitOutput3': {
+          'data': [
+            50.66357421875, 21.364582061767578, -27.127241134643555,
+            65.1489486694336, -30.40681266784668, -6.818390369415283,
+            46.673622131347656, -21.12453842163086
+          ],
+          'descriptor': {shape: [4, 1, 1, 2], dataType: 'float32'}
+        }
+      }
+    }
+  },
+  {
+    'name': 'split float32 5D tensor array splits=[3, 3] options.axis=2',
+    'graph': {
+      'inputs': {
+        'splitInput': {
+          'data': [
+            -64.52056884765625,  -84.60513305664062, -67.99282836914062,
+            -23.446075439453125, -85.64382934570312, 46.87752151489258,
+            -68.11224365234375,  75.99607849121094,  -61.05668640136719,
+            -90.92643737792969,  53.916622161865234, 84.16268920898438,
+            -95.57494354248047,  -52.40757751464844, -29.007186889648438,
+            71.65496063232422,   50.66357421875,     21.364582061767578,
+            -27.127241134643555, 65.1489486694336,   -30.40681266784668,
+            -6.818390369415283,  46.673622131347656, -21.12453842163086
+          ],
+          'descriptor': {shape: [1, 1, 6, 2, 2], dataType: 'float32'}
+        }
+      },
+      'operators': [{
+        'name': 'split',
+        'arguments': [
+          {'input': 'splitInput'}, {'splits': [3, 3]}, {'options': {'axis': 2}}
+        ],
+        'outputs': ['splitOutput1', 'splitOutput2']
+      }],
+      'expectedOutputs': {
+        'splitOutput1': {
+          'data': [
+            -64.52056884765625, -84.60513305664062, -67.99282836914062,
+            -23.446075439453125, -85.64382934570312, 46.87752151489258,
+            -68.11224365234375, 75.99607849121094, -61.05668640136719,
+            -90.92643737792969, 53.916622161865234, 84.16268920898438
+          ],
+          'descriptor': {shape: [1, 1, 3, 2, 2], dataType: 'float32'}
+        },
+        'splitOutput2': {
+          'data': [
+            -95.57494354248047, -52.40757751464844, -29.007186889648438,
+            71.65496063232422, 50.66357421875, 21.364582061767578,
+            -27.127241134643555, 65.1489486694336, -30.40681266784668,
+            -6.818390369415283, 46.673622131347656, -21.12453842163086
+          ],
+          'descriptor': {shape: [1, 1, 3, 2, 2], dataType: 'float32'}
+        }
+      }
+    }
+  },
+  {
+    'name': 'split float32 5D tensor array splits=[2, 4] options.axis=0',
+    'graph': {
+      'inputs': {
+        'splitInput': {
+          'data': [
+            -64.52056884765625,  -84.60513305664062, -67.99282836914062,
+            -23.446075439453125, -85.64382934570312, 46.87752151489258,
+            -68.11224365234375,  75.99607849121094,  -61.05668640136719,
+            -90.92643737792969,  53.916622161865234, 84.16268920898438,
+            -95.57494354248047,  -52.40757751464844, -29.007186889648438,
+            71.65496063232422,   50.66357421875,     21.364582061767578,
+            -27.127241134643555, 65.1489486694336,   -30.40681266784668,
+            -6.818390369415283,  46.673622131347656, -21.12453842163086
+          ],
+          'descriptor': {shape: [6, 1, 1, 2, 2], dataType: 'float32'}
+        }
+      },
+      'operators': [{
+        'name': 'split',
+        'arguments': [
+          {'input': 'splitInput'}, {'splits': [2, 4]}, {'options': {'axis': 0}}
+        ],
+        'outputs': ['splitOutput1', 'splitOutput2']
+      }],
+      'expectedOutputs': {
+        'splitOutput1': {
+          'data': [
+            -64.52056884765625, -84.60513305664062, -67.99282836914062,
+            -23.446075439453125, -85.64382934570312, 46.87752151489258,
+            -68.11224365234375, 75.99607849121094
+          ],
+          'descriptor': {shape: [2, 1, 1, 2, 2], dataType: 'float32'}
+        },
+        'splitOutput2': {
+          'data': [
+            -61.05668640136719, -90.92643737792969, 53.916622161865234,
+            84.16268920898438, -95.57494354248047, -52.40757751464844,
+            -29.007186889648438, 71.65496063232422, 50.66357421875,
+            21.364582061767578, -27.127241134643555, 65.1489486694336,
+            -30.40681266784668, -6.818390369415283, 46.673622131347656,
+            -21.12453842163086
+          ],
+          'descriptor': {shape: [4, 1, 1, 2, 2], dataType: 'float32'}
+        }
+      }
+    }
+  },
+
+  // float16 tests
+  {
+    'name': 'split float16 1D constant tensor number splits default options',
+    'graph': {
+      'inputs': {
+        'splitInput': {
+          'data': [
+            -64.5,    -84.625,   -68,       -23.453125, -85.625,  46.875,
+            -68.125,  76,        -61.0625,  -90.9375,   53.90625, 84.1875,
+            -95.5625, -52.40625, -29,       71.625,     50.65625, 21.359375,
+            -27.125,  65.125,    -30.40625, -6.8203125, 46.6875,  -21.125
+          ],
+          'descriptor': {shape: [24], dataType: 'float16'},
+          'constant': true
+        }
+      },
+      'operators': [{
+        'name': 'split',
+        'arguments': [{'input': 'splitInput'}, {'splits': 3}],
+        'outputs': ['splitOutput1', 'splitOutput2', 'splitOutput3']
+      }],
+      'expectedOutputs': {
+        'splitOutput1': {
+          'data':
+              [-64.5, -84.625, -68, -23.453125, -85.625, 46.875, -68.125, 76],
+          'descriptor': {shape: [8], dataType: 'float16'}
+        },
+        'splitOutput2': {
+          'data': [
+            -61.0625, -90.9375, 53.90625, 84.1875, -95.5625, -52.40625, -29,
+            71.625
+          ],
+          'descriptor': {shape: [8], dataType: 'float16'}
+        },
+        'splitOutput3': {
+          'data': [
+            50.65625, 21.359375, -27.125, 65.125, -30.40625, -6.8203125,
+            46.6875, -21.125
+          ],
+          'descriptor': {shape: [8], dataType: 'float16'}
+        }
+      }
+    }
+  },
+  {
+    'name': 'split float16 1D tensor number splits default options',
+    'graph': {
+      'inputs': {
+        'splitInput': {
+          'data': [
+            -64.5,    -84.625,   -68,       -23.453125, -85.625,  46.875,
+            -68.125,  76,        -61.0625,  -90.9375,   53.90625, 84.1875,
+            -95.5625, -52.40625, -29,       71.625,     50.65625, 21.359375,
+            -27.125,  65.125,    -30.40625, -6.8203125, 46.6875,  -21.125
+          ],
+          'descriptor': {shape: [24], dataType: 'float16'}
+        }
+      },
+      'operators': [{
+        'name': 'split',
+        'arguments': [{'input': 'splitInput'}, {'splits': 3}],
+        'outputs': ['splitOutput1', 'splitOutput2', 'splitOutput3']
+      }],
+      'expectedOutputs': {
+        'splitOutput1': {
+          'data':
+              [-64.5, -84.625, -68, -23.453125, -85.625, 46.875, -68.125, 76],
+          'descriptor': {shape: [8], dataType: 'float16'}
+        },
+        'splitOutput2': {
+          'data': [
+            -61.0625, -90.9375, 53.90625, 84.1875, -95.5625, -52.40625, -29,
+            71.625
+          ],
+          'descriptor': {shape: [8], dataType: 'float16'}
+        },
+        'splitOutput3': {
+          'data': [
+            50.65625, 21.359375, -27.125, 65.125, -30.40625, -6.8203125,
+            46.6875, -21.125
+          ],
+          'descriptor': {shape: [8], dataType: 'float16'}
+        }
+      }
+    }
+  },
+  {
+    'name': 'split float16 2D tensor number splits default options',
+    'graph': {
+      'inputs': {
+        'splitInput': {
+          'data': [
+            -64.5,    -84.625,   -68,       -23.453125, -85.625,  46.875,
+            -68.125,  76,        -61.0625,  -90.9375,   53.90625, 84.1875,
+            -95.5625, -52.40625, -29,       71.625,     50.65625, 21.359375,
+            -27.125,  65.125,    -30.40625, -6.8203125, 46.6875,  -21.125
+          ],
+          'descriptor': {shape: [8, 3], dataType: 'float16'}
+        }
+      },
+      'operators': [{
+        'name': 'split',
+        'arguments': [{'input': 'splitInput'}, {'splits': 2}],
+        'outputs': ['splitOutput1', 'splitOutput2']
+      }],
+      'expectedOutputs': {
+        'splitOutput1': {
+          'data': [
+            -64.5, -84.625, -68, -23.453125, -85.625, 46.875, -68.125, 76,
+            -61.0625, -90.9375, 53.90625, 84.1875
+          ],
+          'descriptor': {shape: [4, 3], dataType: 'float16'}
+        },
+        'splitOutput2': {
+          'data': [
+            -95.5625, -52.40625, -29, 71.625, 50.65625, 21.359375, -27.125,
+            65.125, -30.40625, -6.8203125, 46.6875, -21.125
+          ],
+          'descriptor': {shape: [4, 3], dataType: 'float16'}
+        }
+      }
+    }
+  },
+  {
+    'name': 'split float16 3D tensor number splits default options',
+    'graph': {
+      'inputs': {
+        'splitInput': {
+          'data': [
+            -64.5,    -84.625,   -68,       -23.453125, -85.625,  46.875,
+            -68.125,  76,        -61.0625,  -90.9375,   53.90625, 84.1875,
+            -95.5625, -52.40625, -29,       71.625,     50.65625, 21.359375,
+            -27.125,  65.125,    -30.40625, -6.8203125, 46.6875,  -21.125
+          ],
+          'descriptor': {shape: [4, 3, 2], dataType: 'float16'}
+        }
+      },
+      'operators': [{
+        'name': 'split',
+        'arguments': [{'input': 'splitInput'}, {'splits': 2}],
+        'outputs': ['splitOutput1', 'splitOutput2']
+      }],
+      'expectedOutputs': {
+        'splitOutput1': {
+          'data': [
+            -64.5, -84.625, -68, -23.453125, -85.625, 46.875, -68.125, 76,
+            -61.0625, -90.9375, 53.90625, 84.1875
+          ],
+          'descriptor': {shape: [2, 3, 2], dataType: 'float16'}
+        },
+        'splitOutput2': {
+          'data': [
+            -95.5625, -52.40625, -29, 71.625, 50.65625, 21.359375, -27.125,
+            65.125, -30.40625, -6.8203125, 46.6875, -21.125
+          ],
+          'descriptor': {shape: [2, 3, 2], dataType: 'float16'}
+        }
+      }
+    }
+  },
+  {
+    'name': 'split float16 4D tensor number splits default options',
+    'graph': {
+      'inputs': {
+        'splitInput': {
+          'data': [
+            -64.5,    -84.625,   -68,       -23.453125, -85.625,  46.875,
+            -68.125,  76,        -61.0625,  -90.9375,   53.90625, 84.1875,
+            -95.5625, -52.40625, -29,       71.625,     50.65625, 21.359375,
+            -27.125,  65.125,    -30.40625, -6.8203125, 46.6875,  -21.125
+          ],
+          'descriptor': {shape: [12, 1, 1, 2], dataType: 'float16'}
+        }
+      },
+      'operators': [{
+        'name': 'split',
+        'arguments': [{'input': 'splitInput'}, {'splits': 4}],
+        'outputs':
+            ['splitOutput1', 'splitOutput2', 'splitOutput3', 'splitOutput4']
+      }],
+      'expectedOutputs': {
+        'splitOutput1': {
+          'data': [-64.5, -84.625, -68, -23.453125, -85.625, 46.875],
+          'descriptor': {shape: [3, 1, 1, 2], dataType: 'float16'}
+        },
+        'splitOutput2': {
+          'data': [-68.125, 76, -61.0625, -90.9375, 53.90625, 84.1875],
+          'descriptor': {shape: [3, 1, 1, 2], dataType: 'float16'}
+        },
+        'splitOutput3': {
+          'data': [-95.5625, -52.40625, -29, 71.625, 50.65625, 21.359375],
+          'descriptor': {shape: [3, 1, 1, 2], dataType: 'float16'}
+        },
+        'splitOutput4': {
+          'data': [-27.125, 65.125, -30.40625, -6.8203125, 46.6875, -21.125],
+          'descriptor': {shape: [3, 1, 1, 2], dataType: 'float16'}
+        }
+      }
+    }
+  },
+  {
+    'name': 'split float16 5D tensor number splits default options',
+    'graph': {
+      'inputs': {
+        'splitInput': {
+          'data': [
+            -64.5,    -84.625,   -68,       -23.453125, -85.625,  46.875,
+            -68.125,  76,        -61.0625,  -90.9375,   53.90625, 84.1875,
+            -95.5625, -52.40625, -29,       71.625,     50.65625, 21.359375,
+            -27.125,  65.125,    -30.40625, -6.8203125, 46.6875,  -21.125
+          ],
+          'descriptor': {shape: [6, 1, 1, 2, 2], dataType: 'float16'}
+        }
+      },
+      'operators': [{
+        'name': 'split',
+        'arguments': [{'input': 'splitInput'}, {'splits': 2}],
+        'outputs': ['splitOutput1', 'splitOutput2']
+      }],
+      'expectedOutputs': {
+        'splitOutput1': {
+          'data': [
+            -64.5, -84.625, -68, -23.453125, -85.625, 46.875, -68.125, 76,
+            -61.0625, -90.9375, 53.90625, 84.1875
+          ],
+          'descriptor': {shape: [3, 1, 1, 2, 2], dataType: 'float16'}
+        },
+        'splitOutput2': {
+          'data': [
+            -95.5625, -52.40625, -29, 71.625, 50.65625, 21.359375, -27.125,
+            65.125, -30.40625, -6.8203125, 46.6875, -21.125
+          ],
+          'descriptor': {shape: [3, 1, 1, 2, 2], dataType: 'float16'}
+        }
+      }
+    }
+  },
+  {
+    'name': 'split float16 4D tensor array splits default options',
+    'graph': {
+      'inputs': {
+        'splitInput': {
+          'data': [
+            -64.5,    -84.625,   -68,       -23.453125, -85.625,  46.875,
+            -68.125,  76,        -61.0625,  -90.9375,   53.90625, 84.1875,
+            -95.5625, -52.40625, -29,       71.625,     50.65625, 21.359375,
+            -27.125,  65.125,    -30.40625, -6.8203125, 46.6875,  -21.125
+          ],
+          'descriptor': {shape: [12, 1, 1, 2], dataType: 'float16'}
+        }
+      },
+      'operators': [{
+        'name': 'split',
+        'arguments': [{'input': 'splitInput'}, {'splits': [3, 3, 3, 3]}],
+        'outputs':
+            ['splitOutput1', 'splitOutput2', 'splitOutput3', 'splitOutput4']
+      }],
+      'expectedOutputs': {
+        'splitOutput1': {
+          'data': [-64.5, -84.625, -68, -23.453125, -85.625, 46.875],
+          'descriptor': {shape: [3, 1, 1, 2], dataType: 'float16'}
+        },
+        'splitOutput2': {
+          'data': [-68.125, 76, -61.0625, -90.9375, 53.90625, 84.1875],
+          'descriptor': {shape: [3, 1, 1, 2], dataType: 'float16'}
+        },
+        'splitOutput3': {
+          'data': [-95.5625, -52.40625, -29, 71.625, 50.65625, 21.359375],
+          'descriptor': {shape: [3, 1, 1, 2], dataType: 'float16'}
+        },
+        'splitOutput4': {
+          'data': [-27.125, 65.125, -30.40625, -6.8203125, 46.6875, -21.125],
+          'descriptor': {shape: [3, 1, 1, 2], dataType: 'float16'}
+        }
+      }
+    }
+  },
+  {
+    'name': 'split float16 4D tensor number splits options.axis',
+    'graph': {
+      'inputs': {
+        'splitInput': {
+          'data': [
+            -64.5,    -84.625,   -68,       -23.453125, -85.625,  46.875,
+            -68.125,  76,        -61.0625,  -90.9375,   53.90625, 84.1875,
+            -95.5625, -52.40625, -29,       71.625,     50.65625, 21.359375,
+            -27.125,  65.125,    -30.40625, -6.8203125, 46.6875,  -21.125
+          ],
+          'descriptor': {shape: [12, 1, 1, 2], dataType: 'float16'}
+        }
+      },
+      'operators': [{
+        'name': 'split',
+        'arguments':
+            [{'input': 'splitInput'}, {'splits': 3}, {'options': {'axis': 0}}],
+        'outputs': ['splitOutput1', 'splitOutput2', 'splitOutput3']
+      }],
+      'expectedOutputs': {
+        'splitOutput1': {
+          'data':
+              [-64.5, -84.625, -68, -23.453125, -85.625, 46.875, -68.125, 76],
+          'descriptor': {shape: [4, 1, 1, 2], dataType: 'float16'}
+        },
+        'splitOutput2': {
+          'data': [
+            -61.0625, -90.9375, 53.90625, 84.1875, -95.5625, -52.40625, -29,
+            71.625
+          ],
+          'descriptor': {shape: [4, 1, 1, 2], dataType: 'float16'}
+        },
+        'splitOutput3': {
+          'data': [
+            50.65625, 21.359375, -27.125, 65.125, -30.40625, -6.8203125,
+            46.6875, -21.125
+          ],
+          'descriptor': {shape: [4, 1, 1, 2], dataType: 'float16'}
+        }
+      }
+    }
+  },
+  {
+    'name': 'split float16 5D tensor array splits=[3, 3] options.axis=2',
+    'graph': {
+      'inputs': {
+        'splitInput': {
+          'data': [
+            -64.5,    -84.625,   -68,       -23.453125, -85.625,  46.875,
+            -68.125,  76,        -61.0625,  -90.9375,   53.90625, 84.1875,
+            -95.5625, -52.40625, -29,       71.625,     50.65625, 21.359375,
+            -27.125,  65.125,    -30.40625, -6.8203125, 46.6875,  -21.125
+          ],
+          'descriptor': {shape: [1, 1, 6, 2, 2], dataType: 'float16'}
+        }
+      },
+      'operators': [{
+        'name': 'split',
+        'arguments': [
+          {'input': 'splitInput'}, {'splits': [3, 3]}, {'options': {'axis': 2}}
+        ],
+        'outputs': ['splitOutput1', 'splitOutput2']
+      }],
+      'expectedOutputs': {
+        'splitOutput1': {
+          'data': [
+            -64.5, -84.625, -68, -23.453125, -85.625, 46.875, -68.125, 76,
+            -61.0625, -90.9375, 53.90625, 84.1875
+          ],
+          'descriptor': {shape: [1, 1, 3, 2, 2], dataType: 'float16'}
+        },
+        'splitOutput2': {
+          'data': [
+            -95.5625, -52.40625, -29, 71.625, 50.65625, 21.359375, -27.125,
+            65.125, -30.40625, -6.8203125, 46.6875, -21.125
+          ],
+          'descriptor': {shape: [1, 1, 3, 2, 2], dataType: 'float16'}
+        }
+      }
+    }
+  },
+  {
+    'name': 'split float16 5D tensor array splits=[2, 4] options.axis=0',
+    'graph': {
+      'inputs': {
+        'splitInput': {
+          'data': [
+            -64.5,    -84.625,   -68,       -23.453125, -85.625,  46.875,
+            -68.125,  76,        -61.0625,  -90.9375,   53.90625, 84.1875,
+            -95.5625, -52.40625, -29,       71.625,     50.65625, 21.359375,
+            -27.125,  65.125,    -30.40625, -6.8203125, 46.6875,  -21.125
+          ],
+          'descriptor': {shape: [6, 1, 1, 2, 2], dataType: 'float16'}
+        }
+      },
+      'operators': [{
+        'name': 'split',
+        'arguments': [
+          {'input': 'splitInput'}, {'splits': [2, 4]}, {'options': {'axis': 0}}
+        ],
+        'outputs': ['splitOutput1', 'splitOutput2']
+      }],
+      'expectedOutputs': {
+        'splitOutput1': {
+          'data':
+              [-64.5, -84.625, -68, -23.453125, -85.625, 46.875, -68.125, 76],
+          'descriptor': {shape: [2, 1, 1, 2, 2], dataType: 'float16'}
+        },
+        'splitOutput2': {
+          'data': [
+            -61.0625, -90.9375, 53.90625, 84.1875, -95.5625, -52.40625, -29,
+            71.625, 50.65625, 21.359375, -27.125, 65.125, -30.40625, -6.8203125,
+            46.6875, -21.125
+          ],
+          'descriptor': {shape: [4, 1, 1, 2, 2], dataType: 'float16'}
+        }
+      }
+    }
+  }
 ];
-const inputData2 = [
-  1.,  2.,  3.,  4.,  5.,  6.,
-  7.,  8.,  9.,  10., 11., 12.,
-];
-const inputData3 = [
-  1.,  2.,  3.,  4.,  5.,  6.,
-  7.,  8.,  9.,  10., 11., 12.,
-  13., 14., 15., 16., 17., 18.,
-  19., 20., 21., 22., 23., 24.,
-  25., 26., 27., 28., 29., 30.,
-  31., 32., 33., 34., 35., 36.,
-];
-let context;
-let builder;
 
-const testSplit = async (syncFlag, inputShape, inputValue, expectedArray, splits, axis = undefined) => {
-  const input = builder.input('input', {type: 'float32', dimensions: inputShape});
-  const splittedOperands = builder.split(input, splits, {axis});
-  const namedOperands = {};
-  for (let i = 0; i < splittedOperands.length; ++i) {
-    namedOperands[`split${i}`] = splittedOperands[i];
-  }
-
-  const inputs = {'input': new Float32Array(inputValue)};
-  const outputs = {};
-  for (let i = 0; i < splittedOperands.length; ++i) {
-    outputs[`split${i}`] = new Float32Array(sizeOfShape(expectedArray[i].shape));
-  }
-
-  let graph;
-
-  if (syncFlag) {
-    graph = builder.build(namedOperands);
-    context.compute(graph, inputs, outputs);
-  } else {
-    graph = await builder.buildAsync(namedOperands);
-    await context.computeAsync(graph, inputs, outputs);
-  }
-
-  for (let i = 0; i < splittedOperands.length; ++i) {
-    assert_array_approx_equals_ulp(outputs[`split${i}`], expectedArray[i].value, ULPTolerance.float32.split, 'float32');
-  }
-};
-
-ExecutionArray.forEach(executionType => {
-  const isSync = executionType === 'sync';
-  if (self.GLOBAL.isWindow() && isSync) {
-    return;
-  }
-
-  const targetDeviceTypeArray = getTargetDeviceTypeArray();
-  targetDeviceTypeArray.forEach(deviceType => {
-    promise_setup(async () => {
-      await navigator.ml.createContext({deviceType}).then((ret) => context = ret);
-      builder = new MLGraphBuilder(context);
-    });
-
-    promise_test(async () => {
-      // split 1D to three 1D
-      await testSplit(
-        isSync,
-        [6],
-        inputData1,
-        [
-          {shape: [2], value: [1., 2.]},
-          {shape: [2], value: [3., 4.]},
-          {shape: [2], value: [5., 6.]},
-        ],
-        3);
-      // split 2D to two 2D
-      await testSplit(
-        isSync,
-        [2, 6],
-        inputData2,
-        [
-          {shape: [2, 3], value: [1., 2., 3., 4.,  5.,  6.]},
-          {shape: [2, 3], value: [7., 8., 9., 10., 11., 12.]},
-        ],
-        2);
-      // split 3D to three 3D
-      await testSplit(
-        isSync,
-        [3, 2, 2],
-        inputData2,
-        [
-          {shape: [1, 2, 2], value: [1., 2.,  3.,  4.]},
-          {shape: [1, 2, 2], value: [5., 6.,  7.,  8.]},
-          {shape: [1, 2, 2], value: [9., 10., 11., 12.]},
-        ],
-        3);
-      // split 4D to three 4D
-      await testSplit(
-        isSync,
-        [3, 2, 2, 3],
-        inputData3,
-        [
-          {shape: [1, 2, 2, 3], value: [1.,  2.,  3.,  4.,  5.,  6.,  7.,  8.,  9.,  10., 11., 12.]},
-          {shape: [1, 2, 2, 3], value: [13., 14., 15., 16., 17., 18., 19., 20., 21., 22., 23., 24.]},
-          {shape: [1, 2, 2, 3], value: [25., 26., 27., 28., 29., 30., 31., 32., 33., 34., 35., 36.]},
-        ],
-        3);
-      // split 5D to three 5D
-      await testSplit(
-        isSync,
-        [3, 2, 1, 2, 3],
-        inputData3,
-        [
-          {shape: [1, 2, 1, 2, 3], value: [1.,  2.,  3.,  4.,  5.,  6.,  7.,  8.,  9.,  10., 11., 12.]},
-          {shape: [1, 2, 1, 2, 3], value: [13., 14., 15., 16., 17., 18., 19., 20., 21., 22., 23., 24.]},
-          {shape: [1, 2, 1, 2, 3], value: [25., 26., 27., 28., 29., 30., 31., 32., 33., 34., 35., 36.]},
-        ],
-        3);
-    }, `test split with a number splits and default axis options / ${deviceType} / ${executionType}`);
-
-    promise_test(async () => {
-      // split 1D to three 1D
-      await testSplit(
-        isSync,
-        [6],
-        inputData1,
-        [
-          {shape: [2], value: [1., 2.]},
-          {shape: [2], value: [3., 4.]},
-          {shape: [2], value: [5., 6.]},
-        ],
-        3, 0);
-      // split 2D to two 2D
-      await testSplit(
-        isSync,
-        [2, 6],
-        inputData2,
-        [
-          {shape: [2, 3], value: [1., 2., 3., 7.,  8.,  9.]},
-          {shape: [2, 3], value: [4., 5., 6., 10., 11., 12.]},
-        ],
-        2, 1);
-      await testSplit(
-        isSync,
-        [2, 6],
-        inputData2,
-        [
-          {shape: [2, 3], value: [1., 2., 3., 4.,  5.,  6.]},
-          {shape: [2, 3], value: [7., 8., 9., 10., 11., 12.]},
-        ],
-        2, 0);
-      // split 3D to two 3D
-      await testSplit(
-        isSync,
-        [3, 2, 2],
-        inputData2,
-        [
-          {shape: [3, 2, 1], value: [1., 3., 5., 7., 9., 11.]},
-          {shape: [3, 2, 1], value: [2., 4., 6., 8., 10., 12.]},
-        ],
-        2, 2);
-      await testSplit(
-        isSync,
-        [3, 2, 2],
-        inputData2,
-        [
-          {shape: [3, 1, 2], value: [1., 2., 5., 6., 9., 10.]},
-          {shape: [3, 1, 2], value: [3., 4., 7., 8., 11., 12.]},
-        ],
-        2, 1);
-      // split 3D to three 3D
-      await testSplit(
-        isSync,
-        [3, 2, 2], [1., 2., 3., 4., 5., 6., 7., 8., 9., 10., 11., 12.],
-        [
-          {shape: [1, 2, 2], value: [1., 2.,  3.,  4.]},
-          {shape: [1, 2, 2], value: [5., 6.,  7.,  8.]},
-          {shape: [1, 2, 2], value: [9., 10., 11., 12.]},
-        ],
-        3, 0);
-      // split 4D to two 4D
-      await testSplit(
-        isSync,
-        [3, 2, 2, 3],
-        inputData3,
-        [
-          {
-            shape: [3, 2, 1, 3],
-            value: [
-              1., 2., 3., 7., 8., 9., 13., 14., 15., 19., 20., 21., 25., 26., 27., 31., 32., 33.,
-            ],
-          },
-          {
-            shape: [3, 2, 1, 3],
-            value: [
-              4., 5., 6., 10., 11., 12., 16., 17., 18., 22.,23., 24., 28., 29., 30., 34., 35., 36.,
-            ],
-          },
-        ],
-        2, 2);
-      // split 4D to three 4D
-      await testSplit(
-        isSync,
-        [3, 2, 2, 3],
-        inputData3,
-        [
-          {shape: [1, 2, 2, 3], value: [1.,  2.,  3.,  4.,  5.,  6.,  7.,  8.,  9.,  10., 11., 12.]},
-          {shape: [1, 2, 2, 3], value: [13., 14., 15., 16., 17., 18., 19., 20., 21., 22., 23., 24.]},
-          {shape: [1, 2, 2, 3], value: [25., 26., 27., 28., 29., 30., 31., 32., 33., 34., 35., 36.]},
-        ],
-        3, 0);
-      // split 5D to two 5D
-      await testSplit(
-        isSync,
-        [3, 2, 1, 2, 3],
-        inputData3,
-        [
-          {
-            shape: [3, 1, 1, 2, 3],
-            value: [
-              1.,  2.,  3.,  4.,  5.,  6.,
-              13., 14., 15., 16., 17., 18.,
-              25., 26., 27., 28., 29., 30.,
-            ],
-          },
-          {
-            shape: [3, 1, 1, 2, 3],
-            value: [
-              7.,  8.,  9.,  10., 11., 12.,
-              19., 20., 21., 22., 23., 24.,
-              31., 32., 33., 34., 35., 36.,
-            ],
-          },
-        ],
-        2, 1);
-      // split 5D to three 5D
-      await testSplit(
-        isSync,
-        [3, 2, 1, 2, 3],
-        inputData3,
-        [
-          {shape: [1, 2, 1, 2, 3], value: [1.,  2.,  3.,  4.,  5.,  6.,  7.,  8.,  9.,  10., 11., 12.]},
-          {shape: [1, 2, 1, 2, 3], value: [13., 14., 15., 16., 17., 18., 19., 20., 21., 22., 23., 24.]},
-          {shape: [1, 2, 1, 2, 3], value: [25., 26., 27., 28., 29., 30., 31., 32., 33., 34., 35., 36.]},
-        ],
-        3, 0);
-    }, `test split with a number splits and specified non-negative axis options / ${deviceType} / ${executionType}`);
-
-    promise_test(async () => {
-      // split 1D to three 1D
-      await testSplit(
-        isSync,
-        [6],
-        inputData1,
-        [
-          {shape: [2], value: [1., 2.]},
-          {shape: [2], value: [3., 4.]},
-          {shape: [2], value: [5., 6.]},
-        ],
-        3, -1);
-      // split 2D to two 2D
-      await testSplit(
-        isSync,
-        [2, 6],
-        inputData2,
-        [
-          {shape: [2, 3], value: [1., 2., 3., 7.,  8.,  9.]},
-          {shape: [2, 3], value: [4., 5., 6., 10., 11., 12.]},
-        ],
-        2, -1);
-      await testSplit(
-        isSync,
-        [2, 6],
-        inputData2,
-        [
-          {shape: [2, 3], value: [1., 2., 3., 4.,  5.,  6.]},
-          {shape: [2, 3], value: [7., 8., 9., 10., 11., 12.]},
-        ],
-        2, -2);
-      // split 3D to two 3D
-      await testSplit(
-        isSync,
-        [3, 2, 2],
-        inputData2,
-        [
-          {shape: [3, 2, 1], value: [1., 3., 5., 7., 9., 11.]},
-          {shape: [3, 2, 1], value: [2., 4., 6., 8., 10., 12.]},
-        ],
-        2, -1);
-      await testSplit(
-        isSync,
-        [3, 2, 2],
-        inputData2,
-        [
-          {shape: [3, 1, 2], value: [1., 2., 5., 6., 9., 10.]},
-          {shape: [3, 1, 2], value: [3., 4., 7., 8., 11., 12.]},
-        ],
-        2, -2);
-      // split 3D to three 3D
-      await testSplit(
-        isSync,
-        [3, 2, 2],
-        inputData2,
-        [
-          {shape: [1, 2, 2], value: [1., 2.,  3.,  4.]},
-          {shape: [1, 2, 2], value: [5., 6.,  7.,  8.]},
-          {shape: [1, 2, 2], value: [9., 10., 11., 12.]},
-        ],
-        3, -3);
-      // split 4D to two 4D
-      await testSplit(
-        isSync,
-        [3, 2, 2, 3],
-        inputData3,
-        [
-          {
-            shape: [3, 2, 1, 3],
-            value: [
-              1., 2., 3., 7., 8., 9., 13., 14., 15., 19., 20., 21., 25., 26., 27., 31., 32., 33.,
-            ],
-          },
-          {
-            shape: [3, 2, 1, 3],
-            value: [
-              4., 5., 6., 10., 11., 12., 16., 17., 18., 22.,23., 24., 28., 29., 30., 34., 35., 36.,
-            ],
-          },
-        ],
-        2, -2);
-      // split 4D to three 4D
-      await testSplit(
-        isSync,
-        [3, 2, 2, 3],
-        inputData3,
-        [
-          {shape: [1, 2, 2, 3], value: [1.,  2.,  3.,  4.,  5.,  6.,  7.,  8.,  9.,  10., 11., 12.]},
-          {shape: [1, 2, 2, 3], value: [13., 14., 15., 16., 17., 18., 19., 20., 21., 22., 23., 24.]},
-          {shape: [1, 2, 2, 3], value: [25., 26., 27., 28., 29., 30., 31., 32., 33., 34., 35., 36.]},
-        ],
-        3, -4);
-      // split 5D to two 5D
-      await testSplit(
-        isSync,
-        [3, 2, 1, 2, 3],
-        inputData3,
-        [
-          {
-            shape: [3, 1, 1, 2, 3],
-            value: [
-              1.,  2.,  3.,  4.,  5.,  6.,
-              13., 14., 15., 16., 17., 18.,
-              25., 26., 27., 28., 29., 30.,
-            ],
-          },
-          {
-            shape: [3, 1, 1, 2, 3],
-            value: [
-              7.,  8.,  9.,  10., 11., 12.,
-              19., 20., 21., 22., 23., 24.,
-              31., 32., 33., 34., 35., 36.,
-            ],
-          },
-        ],
-        2, -4);
-      // split 5D to three 5D
-      await testSplit(
-        isSync,
-        [3, 2, 1, 2, 3],
-        inputData3,
-        [
-          {shape: [1, 2, 1, 2, 3], value: [1.,  2.,  3.,  4.,  5.,  6.,  7.,  8.,  9.,  10., 11., 12.]},
-          {shape: [1, 2, 1, 2, 3], value: [13., 14., 15., 16., 17., 18., 19., 20., 21., 22., 23., 24.]},
-          {shape: [1, 2, 1, 2, 3], value: [25., 26., 27., 28., 29., 30., 31., 32., 33., 34., 35., 36.]},
-        ],
-        3, -5);
-    }, `test split with a number splits and specified negative axis options / ${deviceType} / ${executionType}`);
-
-    promise_test(async () => {
-      // split 1D to three 1D
-      await testSplit(
-        isSync,
-        [6],
-        inputData1,
-        [
-          {shape: [2], value: [1., 2.]},
-          {shape: [4], value: [3., 4., 5., 6.]},
-        ],
-        [2, 4]);
-      // split 2D to two 2D
-      await testSplit(
-        isSync,
-        [2, 6],
-        inputData2,
-        [
-          {shape: [2, 3], value: [1., 2., 3., 4.,  5.,  6.]},
-          {shape: [2, 3], value: [7., 8., 9., 10., 11., 12.]},
-        ],
-        [1, 1]);
-      // split 3D to two 3D
-      await testSplit(
-        isSync,
-        [3, 2, 2],
-        inputData2,
-        [
-          {shape: [1, 2, 2], value: [1., 2., 3., 4.]},
-          {shape: [2, 2, 2], value: [5., 6., 7., 8., 9., 10., 11., 12.]},
-        ],
-        [1, 2]);
-      await testSplit(
-        isSync,
-        [3, 2, 2],
-        inputData2,
-        [
-          {shape: [2, 2, 2], value: [1., 2., 3., 4., 5., 6., 7., 8.]},
-          {shape: [1, 2, 2], value: [9., 10., 11., 12.]},
-        ],
-        [2, 1]);
-      // split 3D to three 3D
-      await testSplit(
-        isSync,
-        [3, 2, 2],
-        inputData2,
-        [
-          {shape: [1, 2, 2], value: [1., 2.,  3.,  4.]},
-          {shape: [1, 2, 2], value: [5., 6.,  7.,  8.]},
-          {shape: [1, 2, 2], value: [9., 10., 11., 12.]},
-        ],
-        [1, 1, 1]);
-      // split 4D to two 4D
-      await testSplit(
-        isSync,
-        [3, 2, 2, 3],
-        inputData3,
-        [
-          {shape: [1, 2, 2, 3], value: [1., 2., 3., 4., 5., 6., 7., 8., 9., 10., 11., 12.]},
-          {
-            shape: [2, 2, 2, 3],
-            value:
-            [
-              13., 14., 15., 16., 17., 18., 19., 20., 21., 22., 23., 24.,
-              25., 26., 27., 28., 29., 30., 31., 32., 33., 34., 35., 36.,
-            ],
-          },
-        ],
-        [1, 2]);
-      await testSplit(
-        isSync,
-        [3, 2, 2, 3],
-        inputData3,
-        [
-          {
-            shape: [2, 2, 2, 3],
-            value:
-            [
-              1.,  2.,  3.,  4.,  5.,  6.,  7.,  8.,  9.,  10., 11., 12.,
-              13., 14., 15., 16., 17., 18., 19., 20., 21., 22., 23., 24.,
-            ],
-          },
-          {shape: [1, 2, 2, 3], value: [25., 26., 27., 28., 29., 30., 31., 32., 33., 34., 35., 36.]},
-        ],
-        [2, 1]);
-      // split 4D to three 4D
-      await testSplit(
-        isSync,
-        [3, 2, 2, 3],
-        inputData3,
-        [
-          {shape: [1, 2, 2, 3], value: [1.,  2.,  3.,  4.,  5.,  6.,  7.,  8.,  9.,  10., 11., 12.]},
-          {shape: [1, 2, 2, 3], value: [13., 14., 15., 16., 17., 18., 19., 20., 21., 22., 23., 24.]},
-          {shape: [1, 2, 2, 3], value: [25., 26., 27., 28., 29., 30., 31., 32., 33., 34., 35., 36.]},
-        ],
-        [1, 1, 1]);
-      // split 5D to three 5D
-      await testSplit(
-        isSync,
-        [3, 2, 1, 2, 3],
-        inputData3,
-        [
-          {shape: [1, 2, 1, 2, 3], value: [1.,  2.,  3.,  4.,  5.,  6.,  7.,  8.,  9.,  10., 11., 12.]},
-          {shape: [1, 2, 1, 2, 3], value: [13., 14., 15., 16., 17., 18., 19., 20., 21., 22., 23., 24.]},
-          {shape: [1, 2, 1, 2, 3], value: [25., 26., 27., 28., 29., 30., 31., 32., 33., 34., 35., 36.]},
-        ],
-        [1, 1, 1]);
-    }, `test split with an array splits and default axis options / ${deviceType} / ${executionType}`);
-
-    promise_test(async () => {
-      // split 1D to three 1D
-      await testSplit(
-        isSync,
-        [6],
-        inputData1,
-        [
-          {shape: [2], value: [1., 2.]},
-          {shape: [2], value: [3., 4.]},
-          {shape: [2], value: [5., 6.]},
-        ],
-        [2, 2, 2], 0);
-      // split 2D to two 2D
-      await testSplit(
-        isSync,
-        [2, 6],
-        inputData2,
-        [
-          {shape: [2, 3], value: [1., 2., 3., 7.,  8.,  9.]},
-          {shape: [2, 3], value: [4., 5., 6., 10., 11., 12.]},
-        ],
-        [3, 3], 1);
-      await testSplit(
-        isSync,
-        [2, 6],
-        inputData2,
-        [
-          {shape: [2, 3], value: [1., 2., 3., 4.,  5.,  6.]},
-          {shape: [2, 3], value: [7., 8., 9., 10., 11., 12.]},
-        ],
-        [1, 1], 0);
-      // split 3D to two 3D
-      await testSplit(
-        isSync,
-        [3, 2, 2],
-        inputData2,
-        [
-          {shape: [3, 2, 1], value: [1., 3., 5., 7., 9.,  11.]},
-          {shape: [3, 2, 1], value: [2., 4., 6., 8., 10., 12.]},
-        ],
-        [1, 1], 2);
-      await testSplit(
-        isSync,
-        [3, 2, 2],
-        inputData2,
-        [
-          {shape: [3, 1, 2], value: [1., 2., 5., 6., 9.,  10.]},
-          {shape: [3, 1, 2], value: [3., 4., 7., 8., 11., 12.]},
-        ],
-        [1, 1], 1);
-      // split 3D to three 3D
-      await testSplit(
-        isSync,
-        [3, 2, 2],
-        inputData2,
-        [
-          {shape: [1, 2, 2], value: [1., 2., 3., 4.]},
-          {shape: [1, 2, 2], value: [5., 6., 7., 8.]},
-          {shape: [1, 2, 2], value: [9., 10., 11., 12.]},
-        ],
-        [1, 1, 1], 0);
-      // split 4D to two 4D
-      await testSplit(
-        isSync,
-        [3, 2, 2, 3],
-        inputData3,
-        [
-          {
-            shape: [3, 2, 1, 3],
-            value: [
-              1., 2., 3., 7., 8., 9., 13., 14., 15., 19., 20., 21., 25., 26., 27., 31., 32., 33.,
-            ],
-          },
-          {
-            shape: [3, 2, 1, 3],
-            value: [
-              4., 5., 6., 10., 11., 12., 16., 17., 18., 22.,23., 24., 28., 29., 30., 34., 35., 36.,
-            ],
-          },
-        ],
-        [1, 1], 2);
-      // split 4D to three 4D
-      await testSplit(
-        isSync,
-        [3, 2, 2, 3],
-        inputData3,
-        [
-          {shape: [1, 2, 2, 3], value: [1.,  2.,  3.,  4.,  5.,  6.,  7.,  8.,  9.,  10., 11., 12.]},
-          {shape: [1, 2, 2, 3], value: [13., 14., 15., 16., 17., 18., 19., 20., 21., 22., 23., 24.]},
-          {shape: [1, 2, 2, 3], value: [25., 26., 27., 28., 29., 30., 31., 32., 33., 34., 35., 36.]},
-        ],
-        [1, 1, 1], 0);
-      // split 5D to two 5D
-      await testSplit(
-        isSync,
-        [3, 2, 1, 2, 3],
-        inputData3,
-        [
-          {
-            shape: [3, 1, 1, 2, 3],
-            value: [
-              1.,  2.,  3.,  4.,  5.,  6.,
-              13., 14., 15., 16., 17., 18.,
-              25., 26., 27., 28., 29., 30.,
-            ],
-          },
-          {
-            shape: [3, 1, 1, 2, 3],
-            value: [
-              7.,  8.,  9.,  10., 11., 12.,
-              19., 20., 21., 22., 23., 24.,
-              31., 32., 33., 34., 35., 36.,
-            ],
-          },
-        ],
-        [1, 1], 1);
-      // split 5D to three 5D
-      await testSplit(
-        isSync,
-        [3, 2, 1, 2, 3],
-        inputData3,
-        [
-          {shape: [1, 2, 1, 2, 3], value: [1.,  2.,  3.,  4.,  5.,  6.,  7.,  8.,  9.,  10., 11., 12.]},
-          {shape: [1, 2, 1, 2, 3], value: [13., 14., 15., 16., 17., 18., 19., 20., 21., 22., 23., 24.]},
-          {shape: [1, 2, 1, 2, 3], value: [25., 26., 27., 28., 29., 30., 31., 32., 33., 34., 35., 36.]},
-        ],
-        [1, 1, 1], 0);
-    }, `test split with an array splits and specified non-negative axis options / ${deviceType} / ${executionType}`);
-
-    promise_test(async () => {
-      // split 1D to three 1D
-      await testSplit(
-        isSync,
-        [6],
-        inputData1,
-        [
-          {shape: [2], value: [1., 2.]},
-          {shape: [2], value: [3., 4.]},
-          {shape: [2], value: [5., 6.]},
-        ],
-        [2, 2, 2], -1);
-      // split 2D to two 2D
-      await testSplit(
-        isSync,
-        [2, 6],
-        inputData2,
-        [
-          {shape: [2, 3], value: [1., 2., 3., 7.,  8.,  9.]},
-          {shape: [2, 3], value: [4., 5., 6., 10., 11., 12.]},
-        ],
-        [3, 3], -1);
-      await testSplit(
-        isSync,
-        [2, 6],
-        inputData2,
-        [
-          {shape: [2, 3], value: [1., 2., 3., 4.,  5.,  6.]},
-          {shape: [2, 3], value: [7., 8., 9., 10., 11., 12.]},
-        ],
-        [1, 1], -2);
-      // split 3D to two 3D
-      await testSplit(
-        isSync,
-        [3, 2, 2],
-        inputData2,
-        [
-          {shape: [3, 2, 1], value: [1., 3., 5., 7., 9.,  11.]},
-          {shape: [3, 2, 1], value: [2., 4., 6., 8., 10., 12.]},
-        ],
-        [1, 1], -1);
-      await testSplit(
-        isSync,
-        [3, 2, 2],
-        inputData2,
-        [
-          {shape: [3, 1, 2], value: [1., 2., 5., 6., 9., 10.]},
-          {shape: [3, 1, 2], value: [3., 4., 7., 8., 11., 12.]},
-        ],
-        [1, 1], -2);
-      // split 3D to three 3D
-      await testSplit(
-        isSync,
-        [3, 2, 2],
-        inputData2,
-        [
-          {shape: [1, 2, 2], value: [1., 2.,  3.,  4.]},
-          {shape: [1, 2, 2], value: [5., 6.,  7.,  8.]},
-          {shape: [1, 2, 2], value: [9., 10., 11., 12.]},
-        ],
-        [1, 1, 1], -3);
-      // split 4D to two 4D
-      await testSplit(
-        isSync,
-        [3, 2, 2, 3],
-        inputData3,
-        [
-          {
-            shape: [3, 2, 1, 3],
-            value: [
-              1., 2., 3., 7., 8., 9., 13., 14., 15., 19., 20., 21., 25., 26., 27., 31., 32., 33.,
-            ],
-          },
-          {
-            shape: [3, 2, 1, 3],
-            value: [
-              4., 5., 6., 10., 11., 12., 16., 17., 18., 22.,23., 24., 28., 29., 30., 34., 35., 36.,
-            ],
-          },
-        ],
-        [1, 1], -2);
-      // split 4D to three 4D
-      await testSplit(
-        isSync,
-        [3, 2, 2, 3],
-        inputData3,
-        [
-          {shape: [1, 2, 2, 3], value: [1.,  2.,  3.,  4.,  5.,  6.,  7.,  8.,  9.,  10., 11., 12.]},
-          {shape: [1, 2, 2, 3], value: [13., 14., 15., 16., 17., 18., 19., 20., 21., 22., 23., 24.]},
-          {shape: [1, 2, 2, 3], value: [25., 26., 27., 28., 29., 30., 31., 32., 33., 34., 35., 36.]},
-        ],
-        [1, 1, 1], -4);
-      // split 5D to two 5D
-      await testSplit(
-        isSync,
-        [3, 2, 1, 2, 3],
-        inputData3,
-        [
-          {
-            shape: [3, 1, 1, 2, 3],
-            value: [
-              1.,  2.,  3.,  4.,  5.,  6.,
-              13., 14., 15., 16., 17., 18.,
-              25., 26., 27., 28., 29., 30.,
-            ],
-          },
-          {
-            shape: [3, 1, 1, 2, 3],
-            value: [
-              7.,  8.,  9.,  10., 11., 12.,
-              19., 20., 21., 22., 23., 24.,
-              31., 32., 33., 34., 35., 36.,
-            ],
-          },
-        ],
-        [1, 1], -4);
-      // split 5D to three 5D
-      await testSplit(
-        isSync,
-        [3, 2, 1, 2, 3],
-        inputData3,
-        [
-          {shape: [1, 2, 1, 2, 3], value: [1.,  2.,  3.,  4.,  5.,  6.,  7.,  8.,  9.,  10., 11., 12.]},
-          {shape: [1, 2, 1, 2, 3], value: [13., 14., 15., 16., 17., 18., 19., 20., 21., 22., 23., 24.]},
-          {shape: [1, 2, 1, 2, 3], value: [25., 26., 27., 28., 29., 30., 31., 32., 33., 34., 35., 36.]},
-        ],
-        [1, 1, 1], -5);
-    }, `test split with an array splits and specified negative axis options / ${deviceType} / ${executionType}`);
-  });
-});
+webnn_conformance_test(splitTests, buildAndExecuteGraph, getZeroULPTolerance);
