@@ -1388,7 +1388,7 @@ function getOutputMinimumLimits(operatorsResources, outputOperandName) {
 
 async function getMinimumDataTypeSetJson() {
   try {
-    const response = await fetch('/webnn/resources/minimum_datatype_set.json');
+    const response = await fetch('/wpt-webnn/webnn/resources/minimum_datatype_set.json');
 
     if (!response.ok) {
       throw new Error(`HTTP error! Status: ${response.status}`);
