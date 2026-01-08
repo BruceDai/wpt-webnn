@@ -3,7 +3,7 @@
 // META: variant=?cpu
 // META: variant=?gpu
 // META: variant=?npu
-// META: script=../resources/utils.js
+// META: script=../resources/utils-2026.js
 // META: timeout=long
 
 'use strict';
