@@ -1343,7 +1343,7 @@ const getResample2dPrecisionTolerance =
       return {metricType: 'ULP', value: tolerance};
     };
 
-let requiredDataTypesAndRanks;
+let minimumDataTypeSet;
 
 function checkMinimum(descriptor, operandMinimumLimits) {
   const targetRank = descriptor.shape.length;
@@ -1372,7 +1372,7 @@ function getOutputMinimumLimits(operatorsResources, outputOperandName) {
         operator.outputs.includes(outputOperandName)) {
       // Current gru, lstm, lstmCell and split operators have multiple outputs
       operatorName = operator.name;
-      if (requiredDataTypesAndRanks[operatorName].hasOwnProperty('outputs')) {
+      if (minimumDataTypeSet[operatorName].hasOwnProperty('outputs')) {
         // for split operator
         outputName = 'outputs';
       } else {
@@ -1383,12 +1383,12 @@ function getOutputMinimumLimits(operatorsResources, outputOperandName) {
     }
   }
 
-  return requiredDataTypesAndRanks[operatorName][outputName];
+  return minimumDataTypeSet[operatorName][outputName];
 }
 
-async function getRequiredDataTypesAndRanks() {
+async function getMinimumDataTypeSetJson() {
   try {
-    const response = await fetch('/webnn/resources/required_datatypes_ranks.json');
+    const response = await fetch('/webnn/resources/minimum_datatype_set.json');
 
     if (!response.ok) {
       throw new Error(`HTTP error! Status: ${response.status}`);
@@ -1397,11 +1397,11 @@ async function getRequiredDataTypesAndRanks() {
     const text = await response.text();
     const jsonText =
         text.replace(/\/\/.*|\/\*[\s\S]*?\*\//g, '');  // Remove comments
-    requiredDataTypesAndRanks = JSON.parse(jsonText);
+    minimumDataTypeSet = JSON.parse(jsonText);
   } catch (error) {
     throw new Error(`Error fetching and parsing JSON: ${error.message}`);
   }
-  return requiredDataTypesAndRanks;
+  return minimumDataTypeSet;
 }
 
 function isMinimumTest(test) {
@@ -1411,7 +1411,7 @@ function isMinimumTest(test) {
 
   // check inputs
   for (let operator of graphResources.operators) {
-    const minimumLimits = requiredDataTypesAndRanks[operator.name];
+    const minimumLimits = minimumDataTypeSet[operator.name];
     for (let argument of operator.arguments) {
       for (let [operandName, value] of Object.entries(argument)) {
         if (operandName !== 'options') {
@@ -1481,7 +1481,7 @@ async function webnn_conformance_test(
     promise_setup(async () => {
       // Create a context for checking whether tests are supported.
       const context = await getContext();
-      requiredDataTypesAndRanks = await getRequiredDataTypesAndRanks();
+      minimumDataTypeSet = await getMinimumDataTypeSetJson();
       tests.filter(isTargetTest).forEach((test) => {
         if (validateContextSupportsGraph(context, test.graph) ||
             isMinimumTest(test)) {
