@@ -124,6 +124,46 @@ const scatterNDTests = [
       }
     }
   },
+  {
+    'name': 'scatterND 4D float32 tensors with negative indices [-1, -1, 0, -1]',
+    'graph': {
+      'inputs': {
+        'input': {
+          'data': [
+             1,  2,  3,  4,  5,  6,  7,  8,
+             9, 10, 11, 12, 13, 14, 15, 16,
+            17, 18, 19, 20, 21, 22, 23, 24
+          ],
+          'descriptor': {shape: [3, 2, 2, 2], dataType: 'float32'}
+        },
+        'indices': {
+          'data': [-1, -1, 0, -1],
+          'descriptor': {shape: [2, 2], dataType: 'int32'}
+        },
+        'updates': {
+          'data': [10, 11, 12, 13, 20, 21, 22, 23],
+          'descriptor': {shape: [2, 2, 2], dataType: 'float32'}
+        }
+      },
+      'operators': [{
+        'name': 'scatterND',
+        'arguments': [
+          {'input': 'input'}, {'indices': 'indices'}, {'updates': 'updates'}
+        ],
+        'outputs': 'output'
+      }],
+      'expectedOutputs': {
+        'output': {
+          'data': [
+             1,  2,  3,  4, 20, 21, 22, 23,
+             9, 10, 11, 12, 13, 14, 15, 16,
+            17, 18, 19, 20, 21, 22, 23, 24
+          ],
+          'descriptor': {shape: [3, 2, 2, 2], dataType: 'float32'}
+        }
+      }
+    }
+  },
 
   // float16 tests
   {
@@ -215,6 +255,46 @@ const scatterNDTests = [
         },
         'indices': {
           'data': [2, 1, 0, 1],
+          'descriptor': {shape: [2, 2], dataType: 'int32'}
+        },
+        'updates': {
+          'data': [10, 11, 12, 13, 20, 21, 22, 23],
+          'descriptor': {shape: [2, 2, 2], dataType: 'float16'}
+        }
+      },
+      'operators': [{
+        'name': 'scatterND',
+        'arguments': [
+          {'input': 'input'}, {'indices': 'indices'}, {'updates': 'updates'}
+        ],
+        'outputs': 'output'
+      }],
+      'expectedOutputs': {
+        'output': {
+          'data': [
+             1,  2,  3,  4, 20, 21, 22, 23,
+             9, 10, 11, 12, 13, 14, 15, 16,
+            17, 18, 19, 20, 21, 22, 23, 24
+          ],
+          'descriptor': {shape: [3, 2, 2, 2], dataType: 'float16'}
+        }
+      }
+    }
+  },
+  {
+    'name': 'scatterND 4D float16 tensors with negative indices [-1, -1, 0, -1]',
+    'graph': {
+      'inputs': {
+        'input': {
+          'data': [
+             1,  2,  3,  4,  5,  6,  7,  8,
+             9, 10, 11, 12, 13, 14, 15, 16,
+            17, 18, 19, 20, 21, 22, 23, 24
+          ],
+          'descriptor': {shape: [3, 2, 2, 2], dataType: 'float16'}
+        },
+        'indices': {
+          'data': [-1, -1, 0, -1],
           'descriptor': {shape: [2, 2], dataType: 'int32'}
         },
         'updates': {
