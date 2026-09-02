@@ -206,6 +206,306 @@ const scatterNDTests = [
       }
     }
   },
+  {
+    'name':
+        'scatterND 1D float32 tensors by negative indices',
+    'graph': {
+      'inputs': {
+        'input': {
+          'data': [1, 2, 3, 4, 5, 6, 7, 8],
+          'descriptor': {shape: [8], dataType: 'float32'}
+        },
+        'indices': {
+          // -4→4, -5→3, -7→1, -1→7
+          'data': [-4, -5, -7, -1],
+          'descriptor': {shape: [4, 1], dataType: 'int32'}
+        },
+        'updates': {
+          'data': [9, 10, 11, 12],
+          'descriptor': {shape: [4], dataType: 'float32'}
+        }
+      },
+      'operators': [{
+        'name': 'scatterND',
+        'arguments': [
+          {'input': 'input'}, {'indices': 'indices'}, {'updates': 'updates'}
+        ],
+        'outputs': 'output'
+      }],
+      'expectedOutputs': {
+        'output': {
+          'data': [1, 11, 3, 10, 9, 6, 7, 12],
+          'descriptor': {shape: [8], dataType: 'float32'}
+        }
+      }
+    }
+  },
+    {
+    'name':
+        'scatterND 1D float32 tensors by [4, 3, 1, 7] indices',
+    'graph': {
+      'inputs': {
+        'input': {
+          'data': [1, 2, 3, 4, 5, 6, 7, 8],
+          'descriptor': {shape: [8], dataType: 'float32'}
+        },
+        'indices': {
+          // -4→4, -5→3, -7→1, -1→7
+          'data': [4, 3, 1, 7],
+          'descriptor': {shape: [4, 1], dataType: 'int32'}
+        },
+        'updates': {
+          'data': [9, 10, 11, 12],
+          'descriptor': {shape: [4], dataType: 'float32'}
+        }
+      },
+      'operators': [{
+        'name': 'scatterND',
+        'arguments': [
+          {'input': 'input'}, {'indices': 'indices'}, {'updates': 'updates'}
+        ],
+        'outputs': 'output'
+      }],
+      'expectedOutputs': {
+        'output': {
+          'data': [1, 11, 3, 10, 9, 6, 7, 12],
+          'descriptor': {shape: [8], dataType: 'float32'}
+        }
+      }
+    }
+  },
+  {
+    'name':
+        'scatterND 2D float32 tensors by negative indices',
+    'graph': {
+      'inputs': {
+        'input': {
+          'data':
+              [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16],
+          'descriptor': {shape: [4, 4], dataType: 'float32'}
+        },
+        'indices': {
+          // (-4,-4)→(0,0), (-3,-3)→(1,1), (-2,-2)→(2,2), (-1,-1)→(3,3)
+          'data': [-4, -4, -3, -3, -2, -2, -1, -1],
+          'descriptor': {shape: [4, 2], dataType: 'int32'}
+        },
+        'updates': {
+          'data': [100, 200, 300, 400],
+          'descriptor': {shape: [4], dataType: 'float32'}
+        }
+      },
+      'operators': [{
+        'name': 'scatterND',
+        'arguments': [
+          {'input': 'input'}, {'indices': 'indices'}, {'updates': 'updates'}
+        ],
+        'outputs': 'output'
+      }],
+      'expectedOutputs': {
+        'output': {
+          'data':
+              [100, 2, 3, 4, 5, 200, 7, 8, 9, 10, 300, 12, 13, 14, 15, 400],
+          'descriptor': {shape: [4, 4], dataType: 'float32'}
+        }
+      }
+    }
+  },
+  {
+    'name':
+        'scatterND 2D float32 tensors by [0,0,1,1,2,2,3,3] indices',
+    'graph': {
+      'inputs': {
+        'input': {
+          'data':
+              [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16],
+          'descriptor': {shape: [4, 4], dataType: 'float32'}
+        },
+        'indices': {
+          // (-4,-4)→(0,0), (-3,-3)→(1,1), (-2,-2)→(2,2), (-1,-1)→(3,3)
+          'data': [0, 0, 1, 1, 2, 2, 3, 3],
+          'descriptor': {shape: [4, 2], dataType: 'int32'}
+        },
+        'updates': {
+          'data': [100, 200, 300, 400],
+          'descriptor': {shape: [4], dataType: 'float32'}
+        }
+      },
+      'operators': [{
+        'name': 'scatterND',
+        'arguments': [
+          {'input': 'input'}, {'indices': 'indices'}, {'updates': 'updates'}
+        ],
+        'outputs': 'output'
+      }],
+      'expectedOutputs': {
+        'output': {
+          'data':
+              [100, 2, 3, 4, 5, 200, 7, 8, 9, 10, 300, 12, 13, 14, 15, 400],
+          'descriptor': {shape: [4, 4], dataType: 'float32'}
+        }
+      }
+    }
+  },
+  {
+    'name':
+        'scatterND 4D float32 tensors by negative indices',
+    'graph': {
+      'inputs': {
+        'input': {
+          'data':
+              [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16],
+          'descriptor': {shape: [2, 2, 2, 2], dataType: 'float32'}
+        },
+        'indices': {
+          // (-2,-2)→(0,0), (-1,-1)→(1,1)
+          'data': [-2, -2, -1, -1],
+          'descriptor': {shape: [2, 2], dataType: 'int32'}
+        },
+        'updates': {
+          // Each update is a [2,2] block replacing input[i,j,:,:]
+          'data': [50, 60, 70, 80, 130, 140, 150, 160],
+          'descriptor': {shape: [2, 2, 2], dataType: 'float32'}
+        }
+      },
+      'operators': [{
+        'name': 'scatterND',
+        'arguments': [
+          {'input': 'input'}, {'indices': 'indices'}, {'updates': 'updates'}
+        ],
+        'outputs': 'output'
+      }],
+      'expectedOutputs': {
+        'output': {
+          'data': [
+            50, 60, 70, 80, 5, 6, 7, 8, 9, 10, 11, 12, 130, 140, 150, 160
+          ],
+          'descriptor': {shape: [2, 2, 2, 2], dataType: 'float32'}
+        }
+      }
+    }
+  },
+  {
+    'name':
+        'scatterND 4D float32 tensors by [0,0,1,1] indices',
+    'graph': {
+      'inputs': {
+        'input': {
+          'data':
+              [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16],
+          'descriptor': {shape: [2, 2, 2, 2], dataType: 'float32'}
+        },
+        'indices': {
+          // (0,0)→(0,0), (1,1)→(1,1)
+          'data': [0, 0, 1, 1],
+          'descriptor': {shape: [2, 2], dataType: 'int32'}
+        },
+        'updates': {
+          // Each update is a [2,2] block replacing input[i,j,:,:]
+          'data': [50, 60, 70, 80, 130, 140, 150, 160],
+          'descriptor': {shape: [2, 2, 2], dataType: 'float32'}
+        }
+      },
+      'operators': [{
+        'name': 'scatterND',
+        'arguments': [
+          {'input': 'input'}, {'indices': 'indices'}, {'updates': 'updates'}
+        ],
+        'outputs': 'output'
+      }],
+      'expectedOutputs': {
+        'output': {
+          'data': [
+            50, 60, 70, 80, 5, 6, 7, 8, 9, 10, 11, 12, 130, 140, 150, 160
+          ],
+          'descriptor': {shape: [2, 2, 2, 2], dataType: 'float32'}
+        }
+      }
+    }
+  },
+  {
+    'name':
+        'scatterND 5D float32 tensors by negative indices',
+    'graph': {
+      'inputs': {
+        'input': {
+          'data': [
+            1,  2,  3,  4,  5,  6,  7,  8,  9,  10, 11, 12, 13, 14, 15, 16,
+            17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29, 30, 31, 32
+          ],
+          'descriptor': {shape: [2, 2, 2, 2, 2], dataType: 'float32'}
+        },
+        'indices': {
+          // (-2,-2,-2)→(0,0,0), (-1,-1,-1)→(1,1,1)
+          'data': [-2, -2, -2, -1, -1, -1],
+          'descriptor': {shape: [2, 3], dataType: 'int32'}
+        },
+        'updates': {
+          // Each update is a [2,2] block replacing input[i,j,k,:,:]
+          'data': [100, 101, 102, 103, 110, 111, 112, 113],
+          'descriptor': {shape: [2, 2, 2], dataType: 'float32'}
+        }
+      },
+      'operators': [{
+        'name': 'scatterND',
+        'arguments': [
+          {'input': 'input'}, {'indices': 'indices'}, {'updates': 'updates'}
+        ],
+        'outputs': 'output'
+      }],
+      'expectedOutputs': {
+        'output': {
+          'data': [
+            100, 101, 102, 103, 5,   6,   7,   8,   9,   10,  11,
+            12,  13,  14,  15,  16,  17,  18,  19,  20,  21,  22,
+            23,  24,  25,  26,  27,  28,  110, 111, 112, 113
+          ],
+          'descriptor': {shape: [2, 2, 2, 2, 2], dataType: 'float32'}
+        }
+      }
+    }
+  },
+  {
+    'name':
+        'scatterND 5D float32 tensors by [0,0,0,1,1,1] indices',
+    'graph': {
+      'inputs': {
+        'input': {
+          'data': [
+            1,  2,  3,  4,  5,  6,  7,  8,  9,  10, 11, 12, 13, 14, 15, 16,
+            17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29, 30, 31, 32
+          ],
+          'descriptor': {shape: [2, 2, 2, 2, 2], dataType: 'float32'}
+        },
+        'indices': {
+          // (0,0,0)→(0,0,0), (1,1,1)→(1,1,1)
+          'data': [0, 0, 0, 1, 1, 1],
+          'descriptor': {shape: [2, 3], dataType: 'int32'}
+        },
+        'updates': {
+          // Each update is a [2,2] block replacing input[i,j,k,:,:]
+          'data': [100, 101, 102, 103, 110, 111, 112, 113],
+          'descriptor': {shape: [2, 2, 2], dataType: 'float32'}
+        }
+      },
+      'operators': [{
+        'name': 'scatterND',
+        'arguments': [
+          {'input': 'input'}, {'indices': 'indices'}, {'updates': 'updates'}
+        ],
+        'outputs': 'output'
+      }],
+      'expectedOutputs': {
+        'output': {
+          'data': [
+            100, 101, 102, 103, 5,   6,   7,   8,   9,   10,  11,
+            12,  13,  14,  15,  16,  17,  18,  19,  20,  21,  22,
+            23,  24,  25,  26,  27,  28,  110, 111, 112, 113
+          ],
+          'descriptor': {shape: [2, 2, 2, 2, 2], dataType: 'float32'}
+        }
+      }
+    }
+  },
 
   // float16 tests
   {
@@ -359,6 +659,306 @@ const scatterNDTests = [
             17, 18, 19, 20, 21, 22, 23, 24
           ],
           'descriptor': {shape: [3, 2, 2, 2], dataType: 'float16'}
+        }
+      }
+    }
+  },
+  {
+    'name':
+        'scatterND 1D float16 tensors by negative indices',
+    'graph': {
+      'inputs': {
+        'input': {
+          'data': [1, 2, 3, 4, 5, 6, 7, 8],
+          'descriptor': {shape: [8], dataType: 'float16'}
+        },
+        'indices': {
+          // -4→4, -5→3, -7→1, -1→7
+          'data': [-4, -5, -7, -1],
+          'descriptor': {shape: [4, 1], dataType: 'int32'}
+        },
+        'updates': {
+          'data': [9, 10, 11, 12],
+          'descriptor': {shape: [4], dataType: 'float16'}
+        }
+      },
+      'operators': [{
+        'name': 'scatterND',
+        'arguments': [
+          {'input': 'input'}, {'indices': 'indices'}, {'updates': 'updates'}
+        ],
+        'outputs': 'output'
+      }],
+      'expectedOutputs': {
+        'output': {
+          'data': [1, 11, 3, 10, 9, 6, 7, 12],
+          'descriptor': {shape: [8], dataType: 'float16'}
+        }
+      }
+    }
+  },
+  {
+    'name':
+        'scatterND 1D float16 tensors by [4, 3, 1, 7] indices',
+    'graph': {
+      'inputs': {
+        'input': {
+          'data': [1, 2, 3, 4, 5, 6, 7, 8],
+          'descriptor': {shape: [8], dataType: 'float16'}
+        },
+        'indices': {
+          // -4→4, -5→3, -7→1, -1→7
+          'data': [4, 3, 1, 7],
+          'descriptor': {shape: [4, 1], dataType: 'int32'}
+        },
+        'updates': {
+          'data': [9, 10, 11, 12],
+          'descriptor': {shape: [4], dataType: 'float16'}
+        }
+      },
+      'operators': [{
+        'name': 'scatterND',
+        'arguments': [
+          {'input': 'input'}, {'indices': 'indices'}, {'updates': 'updates'}
+        ],
+        'outputs': 'output'
+      }],
+      'expectedOutputs': {
+        'output': {
+          'data': [1, 11, 3, 10, 9, 6, 7, 12],
+          'descriptor': {shape: [8], dataType: 'float16'}
+        }
+      }
+    }
+  },
+  {
+    'name':
+        'scatterND 2D float16 tensors by negative indices',
+    'graph': {
+      'inputs': {
+        'input': {
+          'data':
+              [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16],
+          'descriptor': {shape: [4, 4], dataType: 'float16'}
+        },
+        'indices': {
+          // (-4,-4)→(0,0), (-3,-3)→(1,1), (-2,-2)→(2,2), (-1,-1)→(3,3)
+          'data': [-4, -4, -3, -3, -2, -2, -1, -1],
+          'descriptor': {shape: [4, 2], dataType: 'int32'}
+        },
+        'updates': {
+          'data': [100, 200, 300, 400],
+          'descriptor': {shape: [4], dataType: 'float16'}
+        }
+      },
+      'operators': [{
+        'name': 'scatterND',
+        'arguments': [
+          {'input': 'input'}, {'indices': 'indices'}, {'updates': 'updates'}
+        ],
+        'outputs': 'output'
+      }],
+      'expectedOutputs': {
+        'output': {
+          'data':
+              [100, 2, 3, 4, 5, 200, 7, 8, 9, 10, 300, 12, 13, 14, 15, 400],
+          'descriptor': {shape: [4, 4], dataType: 'float16'}
+        }
+      }
+    }
+  },
+  {
+    'name':
+        'scatterND 2D float16 tensors by [0,0,1,1,2,2,3,3] indices',
+    'graph': {
+      'inputs': {
+        'input': {
+          'data':
+              [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16],
+          'descriptor': {shape: [4, 4], dataType: 'float16'}
+        },
+        'indices': {
+          // (0,0)→(0,0), (1,1)→(1,1), (2,2)→(2,2), (3,3)→(3,3)
+          'data': [0, 0, 1, 1, 2, 2, 3, 3],
+          'descriptor': {shape: [4, 2], dataType: 'int32'}
+        },
+        'updates': {
+          'data': [100, 200, 300, 400],
+          'descriptor': {shape: [4], dataType: 'float16'}
+        }
+      },
+      'operators': [{
+        'name': 'scatterND',
+        'arguments': [
+          {'input': 'input'}, {'indices': 'indices'}, {'updates': 'updates'}
+        ],
+        'outputs': 'output'
+      }],
+      'expectedOutputs': {
+        'output': {
+          'data':
+              [100, 2, 3, 4, 5, 200, 7, 8, 9, 10, 300, 12, 13, 14, 15, 400],
+          'descriptor': {shape: [4, 4], dataType: 'float16'}
+        }
+      }
+    }
+  },
+  {
+    'name':
+        'scatterND 4D float16 tensors by negative indices',
+    'graph': {
+      'inputs': {
+        'input': {
+          'data':
+              [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16],
+          'descriptor': {shape: [2, 2, 2, 2], dataType: 'float16'}
+        },
+        'indices': {
+          // (-2,-2)→(0,0), (-1,-1)→(1,1)
+          'data': [-2, -2, -1, -1],
+          'descriptor': {shape: [2, 2], dataType: 'int32'}
+        },
+        'updates': {
+          // Each update is a [2,2] block replacing input[i,j,:,:]
+          'data': [50, 60, 70, 80, 130, 140, 150, 160],
+          'descriptor': {shape: [2, 2, 2], dataType: 'float16'}
+        }
+      },
+      'operators': [{
+        'name': 'scatterND',
+        'arguments': [
+          {'input': 'input'}, {'indices': 'indices'}, {'updates': 'updates'}
+        ],
+        'outputs': 'output'
+      }],
+      'expectedOutputs': {
+        'output': {
+          'data': [
+            50, 60, 70, 80, 5, 6, 7, 8, 9, 10, 11, 12, 130, 140, 150, 160
+          ],
+          'descriptor': {shape: [2, 2, 2, 2], dataType: 'float16'}
+        }
+      }
+    }
+  },
+  {
+    'name':
+        'scatterND 4D float16 tensors by [0,0,1,1] indices',
+    'graph': {
+      'inputs': {
+        'input': {
+          'data':
+              [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16],
+          'descriptor': {shape: [2, 2, 2, 2], dataType: 'float16'}
+        },
+        'indices': {
+          // (0,0)→(0,0), (1,1)→(1,1)
+          'data': [0, 0, 1, 1],
+          'descriptor': {shape: [2, 2], dataType: 'int32'}
+        },
+        'updates': {
+          // Each update is a [2,2] block replacing input[i,j,:,:]
+          'data': [50, 60, 70, 80, 130, 140, 150, 160],
+          'descriptor': {shape: [2, 2, 2], dataType: 'float16'}
+        }
+      },
+      'operators': [{
+        'name': 'scatterND',
+        'arguments': [
+          {'input': 'input'}, {'indices': 'indices'}, {'updates': 'updates'}
+        ],
+        'outputs': 'output'
+      }],
+      'expectedOutputs': {
+        'output': {
+          'data': [
+            50, 60, 70, 80, 5, 6, 7, 8, 9, 10, 11, 12, 130, 140, 150, 160
+          ],
+          'descriptor': {shape: [2, 2, 2, 2], dataType: 'float16'}
+        }
+      }
+    }
+  },
+  {
+    'name':
+        'scatterND 5D float16 tensors by negative indices',
+    'graph': {
+      'inputs': {
+        'input': {
+          'data': [
+            1,  2,  3,  4,  5,  6,  7,  8,  9,  10, 11, 12, 13, 14, 15, 16,
+            17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29, 30, 31, 32
+          ],
+          'descriptor': {shape: [2, 2, 2, 2, 2], dataType: 'float16'}
+        },
+        'indices': {
+          // (-2,-2,-2)→(0,0,0), (-1,-1,-1)→(1,1,1)
+          'data': [-2, -2, -2, -1, -1, -1],
+          'descriptor': {shape: [2, 3], dataType: 'int32'}
+        },
+        'updates': {
+          // Each update is a [2,2] block replacing input[i,j,k,:,:]
+          'data': [100, 101, 102, 103, 110, 111, 112, 113],
+          'descriptor': {shape: [2, 2, 2], dataType: 'float16'}
+        }
+      },
+      'operators': [{
+        'name': 'scatterND',
+        'arguments': [
+          {'input': 'input'}, {'indices': 'indices'}, {'updates': 'updates'}
+        ],
+        'outputs': 'output'
+      }],
+      'expectedOutputs': {
+        'output': {
+          'data': [
+            100, 101, 102, 103, 5,   6,   7,   8,   9,   10,  11,
+            12,  13,  14,  15,  16,  17,  18,  19,  20,  21,  22,
+            23,  24,  25,  26,  27,  28,  110, 111, 112, 113
+          ],
+          'descriptor': {shape: [2, 2, 2, 2, 2], dataType: 'float16'}
+        }
+      }
+    }
+  },
+  {
+    'name':
+        'scatterND 5D float16 tensors by [0,0,0,1,1,1] indices',
+    'graph': {
+      'inputs': {
+        'input': {
+          'data': [
+            1,  2,  3,  4,  5,  6,  7,  8,  9,  10, 11, 12, 13, 14, 15, 16,
+            17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29, 30, 31, 32
+          ],
+          'descriptor': {shape: [2, 2, 2, 2, 2], dataType: 'float16'}
+        },
+        'indices': {
+          // (-2,-2,-2)→(0,0,0), (-1,-1,-1)→(1,1,1)
+          'data': [-2, -2, -2, -1, -1, -1],
+          'descriptor': {shape: [2, 3], dataType: 'int32'}
+        },
+        'updates': {
+          // Each update is a [2,2] block replacing input[i,j,k,:,:]
+          'data': [100, 101, 102, 103, 110, 111, 112, 113],
+          'descriptor': {shape: [2, 2, 2], dataType: 'float16'}
+        }
+      },
+      'operators': [{
+        'name': 'scatterND',
+        'arguments': [
+          {'input': 'input'}, {'indices': 'indices'}, {'updates': 'updates'}
+        ],
+        'outputs': 'output'
+      }],
+      'expectedOutputs': {
+        'output': {
+          'data': [
+            100, 101, 102, 103, 5,   6,   7,   8,   9,   10,  11,
+            12,  13,  14,  15,  16,  17,  18,  19,  20,  21,  22,
+            23,  24,  25,  26,  27,  28,  110, 111, 112, 113
+          ],
+          'descriptor': {shape: [2, 2, 2, 2, 2], dataType: 'float16'}
         }
       }
     }
