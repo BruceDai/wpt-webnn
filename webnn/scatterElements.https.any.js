@@ -10,7 +10,7 @@
 
 const scatterElementsTests = [
   {
-    'name': 'scatterElements float32 tensors along axis 0',
+    'name': 'scatterElements float32 2D tensors along axis 0',
     'graph': {
       'inputs': {
         'input': {
@@ -43,7 +43,7 @@ const scatterElementsTests = [
     }
   },
   {
-    'name': 'scatterElements float32 tensors along axis 0 and constant indices',
+    'name': 'scatterElements float32 2D tensors along axis 0 and constant indices',
     'graph': {
       'inputs': {
         'input': {
@@ -77,7 +77,7 @@ const scatterElementsTests = [
     }
   },
   {
-    'name': 'scatterElements float32 tensors along axis 1',
+    'name': 'scatterElements float32 2D tensors along axis 1',
     'graph': {
       'inputs': {
         'input': {
@@ -108,7 +108,7 @@ const scatterElementsTests = [
     }
   },
   {
-    'name': 'scatterElements float32 tensors along axis 1 and constant indices',
+    'name': 'scatterElements float32 2D tensors along axis 1 and constant indices',
     'graph': {
       'inputs': {
         'input': {
@@ -142,7 +142,7 @@ const scatterElementsTests = [
     }
   },
   {
-    'name': 'scatterElements float32 tensors along axis 0 and constant negative indices',
+    'name': 'scatterElements float32 2D tensors along axis 0 and constant negative indices',
     'graph': {
       'inputs': {
         'input': {
@@ -185,7 +185,8 @@ const scatterElementsTests = [
         },
         'indices': {
           'data': [4, 0, 2],
-          'descriptor': {shape: [3], dataType: 'int32'}
+          'descriptor': {shape: [3], dataType: 'int32'},
+          'constant': true
         },
         'updates': {
           'data': [100, 200, 300],
@@ -252,7 +253,8 @@ const scatterElementsTests = [
         },
         'indices': {
           'data': [0, 1, 2, 0, 1, 2, 0, 1],
-          'descriptor': {shape: [2, 2, 2], dataType: 'int32'}
+          'descriptor': {shape: [2, 2, 2], dataType: 'int32'},
+          'constant': true
         },
         'updates': {
           'data': [100, 101, 102, 103, 200, 201, 202, 203],
@@ -320,7 +322,8 @@ const scatterElementsTests = [
         },
         'indices': {
           'data': [1, 0, 1, 0, 1, 0, 1, 0, 0, 1, 0, 1, 0, 1, 0, 1],
-          'descriptor': {shape: [2, 2, 2, 2], dataType: 'int32'}
+          'descriptor': {shape: [2, 2, 2, 2], dataType: 'int32'},
+          'constant': true
         },
         'updates': {
           'data': [
@@ -403,7 +406,8 @@ const scatterElementsTests = [
         },
         'indices': {
           'data': [2, 2, 0, 0, 2, 2, 0, 0],
-          'descriptor': {shape: [1, 2, 2, 2, 1], dataType: 'int32'}
+          'descriptor': {shape: [1, 2, 2, 2, 1], dataType: 'int32'},
+          'constant': true
         },
         'updates': {
           'data': [11, 12, 13, 14, 15, 16, 17, 18],
@@ -463,7 +467,7 @@ const scatterElementsTests = [
 
   // float16 tests
   {
-    'name': 'scatterElements float16 tensors along axis 0',
+    'name': 'scatterElements float16 2D tensors along axis 0',
     'graph': {
       'inputs': {
         'input': {
@@ -498,7 +502,7 @@ const scatterElementsTests = [
     }
   },
   {
-    'name': 'scatterElements float16 tensors along axis 0 and constant indices',
+    'name': 'scatterElements float16 2D tensors along axis 0 and constant indices',
     'graph': {
       'inputs': {
         'input': {
@@ -534,7 +538,7 @@ const scatterElementsTests = [
     }
   },
   {
-    'name': 'scatterElements float16 tensors along axis 1',
+    'name': 'scatterElements float16 2D tensors along axis 1',
     'graph': {
       'inputs': {
         'input': {
@@ -565,7 +569,7 @@ const scatterElementsTests = [
     }
   },
   {
-    'name': 'scatterElements float16 tensors along axis 1 and constant indices',
+    'name': 'scatterElements float16 2D tensors along axis 1 and constant indices',
     'graph': {
       'inputs': {
         'input': {
@@ -599,7 +603,7 @@ const scatterElementsTests = [
     }
   },
   {
-    'name': 'scatterElements float16 tensors along axis 0 and constant negative indices',
+    'name': 'scatterElements float16 2D tensors along axis 0 and constant negative indices',
     'graph': {
       'inputs': {
         'input': {
@@ -644,7 +648,8 @@ const scatterElementsTests = [
         },
         'indices': {
           'data': [4, 0, 2],
-          'descriptor': {shape: [3], dataType: 'int32'}
+          'descriptor': {shape: [3], dataType: 'int32'},
+          'constant': true
         },
         'updates': {
           'data': [100, 200, 300],
@@ -711,7 +716,8 @@ const scatterElementsTests = [
         },
         'indices': {
           'data': [0, 1, 2, 0, 1, 2, 0, 1],
-          'descriptor': {shape: [2, 2, 2], dataType: 'int32'}
+          'descriptor': {shape: [2, 2, 2], dataType: 'int32'},
+          'constant': true
         },
         'updates': {
           'data': [100, 101, 102, 103, 200, 201, 202, 203],
@@ -779,7 +785,8 @@ const scatterElementsTests = [
         },
         'indices': {
           'data': [1, 0, 1, 0, 1, 0, 1, 0, 0, 1, 0, 1, 0, 1, 0, 1],
-          'descriptor': {shape: [2, 2, 2, 2], dataType: 'int32'}
+          'descriptor': {shape: [2, 2, 2, 2], dataType: 'int32'},
+          'constant': true
         },
         'updates': {
           'data': [
@@ -862,7 +869,8 @@ const scatterElementsTests = [
         },
         'indices': {
           'data': [2, 2, 0, 0, 2, 2, 0, 0],
-          'descriptor': {shape: [1, 2, 2, 2, 1], dataType: 'int32'}
+          'descriptor': {shape: [1, 2, 2, 2, 1], dataType: 'int32'},
+          'constant': true
         },
         'updates': {
           'data': [11, 12, 13, 14, 15, 16, 17, 18],
