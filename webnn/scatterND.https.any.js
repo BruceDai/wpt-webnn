@@ -935,7 +935,7 @@ const scatterNDTests = [
         },
         'indices': {
           // (-2,-2,-2)→(0,0,0), (-1,-1,-1)→(1,1,1)
-          'data': [-2, -2, -2, -1, -1, -1],
+          'data': [0, 0, 0, 1, 1, 1],
           'descriptor': {shape: [2, 3], dataType: 'int32'}
         },
         'updates': {
